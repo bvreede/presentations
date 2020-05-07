@@ -167,21 +167,91 @@ Saved files include, per sub-report:
 ![faculty_science](images/alluvial_science.png)
 ]
 ---
-#
+# Data from Delft
 
+Seems easy but...
 
----
-#
+![delft_data](images/delft_data.png)
 
-
----
-#
-
+- no single organization unit column
+- no single ISSN column
 
 ---
-#
+# Instead of `open_everything`...
 
+```{r}
+df <- read_excel("oamonitor/Report OA TU Delft 2019 -  20200420_FVC.xlsx")
+```
+
+Plus some `dplyr` magic.
+
+```{r, include=F}
+df <- df %>%
+  mutate(doi = clean_doi(`DOI - clean`)) %>%
+  separate_rows(`ISSN ALL`, sep=";") %>%
+  mutate(issn = clean_issn(`ISSN ALL`)) %>%
+  mutate(type = case_when(
+    !duplicated(UUID) ~ "issn",
+    T ~ "other")) %>%
+  pivot_wider(names_from = type, values_from = issn) %>%
+  mutate(type = case_when(
+    !is.na(issn) ~ "issn",
+    !is.na(other) ~ "other",
+    T ~ "neither"
+  ))
+
+df_keep <- df %>%
+  filter(type != "other") %>%
+  select(-other, -type)
+
+df_other <- df %>%
+  filter(type == "other") %>%
+  filter(!duplicated(UUID)) %>%
+  mutate(eissn = other) %>%
+  select(-issn, -other, -type)
+
+df <- full_join(df_keep,df_other,by="UUID", suffix = c("",".remove")) %>%
+  select(-ends_with(".remove"))
+
+rm(df_keep,df_other)
+
+df <- df %>%
+  pivot_longer(`01 - AE`:`12 - EXT`, names_to = "org_unit", values_to = "presence") %>%
+  filter(presence == "YES") %>%
+  select(-presence)
+
+df <- df %>%
+  mutate(OA_label_TU = case_when(
+    `CAT ALL` == "A" ~ "GOLD",
+    `CAT ALL` == "B" ~ "HYBRID", 
+    `CAT ALL` == "C" ~ "GREEN",
+    `CAT ALL` == "No OA" ~ "CLOSED",
+    T ~ "UNDETERMINED"))
+
+df <- df %>%
+  rename(system_id = UUID) %>%
+  mutate(source = "TU Delft")
+```
 
 ---
+# Columns now created
+
+```{r}
+df %>% select(org_unit, doi, issn) %>% head(10)
+```
+
+---
+# Loading external data and classifying
+
+```{r, echo=F}
+doajdf <- get_doaj(df, source="oamonitor/doaj_from_issn_2020-05-06.csv")
+upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-05-06.csv")
+
+df_class <- classify_oa(df, doajdf, vsnudf, upwdf)
+```
+---
+
+
+
 
 
