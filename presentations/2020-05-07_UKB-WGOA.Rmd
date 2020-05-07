@@ -250,8 +250,42 @@ upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-05-06.csv")
 df_class <- classify_oa(df, doajdf, vsnudf, upwdf)
 ```
 ---
+# Differences with TU monitor
 
+```{r, echo=F, error=F, warning=F}
+oacols <- c("gray88","gold1","orange3","chartreuse3")
 
+df_sum <- df_class %>%
+  group_by(OA_label_TU, OA_label) %>%
+  deduplicate() %>%
+  summarise(n_papers = n())
 
+ggplot(df_sum,
+         aes(y = n_papers,
+             axis1 = OA_label_TU, axis2 = OA_label)) +
+    geom_alluvium(aes(fill = OA_label),
+                  width = 0, knot.pos = 0, reverse = FALSE) +
+    guides(fill = FALSE) +
+    geom_stratum(width = 1/8, reverse = FALSE) +
+    geom_text(stat = "stratum", infer.label = TRUE, reverse = FALSE) +
+    scale_x_continuous(breaks = 1:2, labels = c("TU", "OAmonitor")) +
+    scale_fill_manual(values = oacols) +
+    theme_bw() +
+    labs(title = "Differences between TU and OAmonitor",
+         y = "Number of papers")
 
+```
 
+---
+# Reason for these differences
+
+- Custom data from Pure (repository and Taverne information) - this data can be added to a custom label!
+- Differences in unpaywall color between measuring dates
+- decision to label Unpaywall Gold as Gold instead of Hybrid
+- others?
+
+---
+# Further development
+- Better tutorial
+- Finish the packaging & increase robustness
+- Improve pipeline, data, and move towards national use!
