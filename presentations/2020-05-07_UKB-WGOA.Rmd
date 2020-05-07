@@ -1,5 +1,5 @@
 ---
-title: "Open Access Monitoring"
+title: "Open Access Monitoring in Nederland"
 author: "Barbara Vreede & Kristina Hettne"
 output:
   xaringan::moon_reader:
@@ -14,5 +14,141 @@ output:
 options(htmltools.dir.version = FALSE)
 ```
 
-# Monitoring Open Access
+# Access to publications
+
+Divided into the following subtypes:
+
+![oatypes](images/oatypes.png)
+
+| Category | Access type |
+|:---:|:---|
+| A | Gold |
+| B | Hybrid |
+| C | Green |
+| D | Closed |
+
+---
+# Why monitor the output?
+
+.pull-left-larger[
+- National reporting (and comparison)
+
+- Response to policy, local and national
+
+- Designing strategies to improve
+
+![oanl](images/NL_OA_2019.png)
+]
+--
+.pull-right-smaller[
+_Aren't we comparing apples and oranges?_
+
+_Rapid response is vital!_
+]
+---
+# Automating the monitoring
+
+For standardized and rapid reporting:
+
+![](images/poster_graphic.svg)
+
+---
+# Install the package
+
+Install from [its github repository](https://github.com/bvreede/OAmonitor):
+
+```r
+devtools::install_github("https://github.com/bvreede/OAmonitor")
+```
+
+Load the package (and some other libraries we'll use)
+```{r}
+library(OAmonitor)
+library(readxl)
+library(tidyverse)
+```
+
+---
+# Data format
+
+Export from a CRIS, with required columns:
+
+- organization unit (e.g. departments, faculties)
+- unique ID (per publication in the CRIS; does not need to be unique in the dataframe)
+- ISSN (and an optional EISSN)
+- DOI
+
+![](images/UMCU_pure.png)
+
+
+---
+# Including multiple input dataframes
+
+Fill out the excel template, indicating the location of each column.
+Ensure all files are placed in the same folder.
+
+![](images/input_excel.png)
+
+---
+# Load data
+
+```{r}
+df <- open_everything(file="oamonitor/config_pub_files.xlsx", dir = "oamonitor")
+
+glimpse(df)
+```
+
+---
+# Load external data
+
+- DOAJ (via API)
+- Unpaywall (via API)
+- VSNU (from excel)
+
+Running APIs takes a while (several hours), so the function contains the option to save, and then reload the data.
+
+```{r, echo=F}
+doajdf <- get_doaj(df, source="oamonitor/doaj_from_issn_2020-03-09.csv")
+upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-03-09.csv")
+vsnudf <- get_vsnu("oamonitor/VSNU-cummulatief_WOA20200302.xlsx")
+```
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+
 

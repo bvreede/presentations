@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Open Access Monitoring in Nederland</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Barbara Vreede &amp; Kristina Hettne" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Open Access Monitoring in Nederland
+### Barbara Vreede &amp; Kristina Hettne
+
+---
+
+
+
+# Access to publications
+
+Divided into the following subtypes:
+
+![oatypes](images/oatypes.png)
+
+| Category | Access type |
+|:---:|:---|
+| A | Gold |
+| B | Hybrid |
+| C | Green |
+| D | Closed |
+
+---
+# Why monitor the output?
+
+.pull-left-larger[
+- National reporting (and comparison)
+
+- Response to policy, local and national
+
+- Designing strategies to improve
+
+![oanl](images/NL_OA_2019.png)
+]
+--
+.pull-right-smaller[
+_Aren't we comparing apples and oranges?_
+
+_Rapid response is vital!_
+]
+---
+# Automating the monitoring
+
+For standardized and rapid reporting:
+
+![](images/poster_graphic.svg)
+
+---
+# Install the package
+
+Install from [its github repository](https://github.com/bvreede/OAmonitor):
+
+```r
+devtools::install_github("https://github.com/bvreede/OAmonitor")
+```
+
+Load the package (and some other libraries we'll use)
+
+```r
+library(OAmonitor)
+library(readxl)
+library(tidyverse)
+```
+
+---
+# Data format
+
+Export from a CRIS, with required columns:
+
+- organization unit (e.g. departments, faculties)
+- unique ID (per publication in the CRIS; does not need to be unique in the dataframe)
+- ISSN (and an optional EISSN)
+- DOI
+
+![](images/UMCU_pure.png)
+
+
+---
+# Including multiple input dataframes
+
+Fill out the excel template, indicating the location of each column.
+Ensure all files are placed in the same folder.
+
+![](images/input_excel.png)
+
+---
+# Load data
+
+
+```r
+df &lt;- open_everything(file="oamonitor/config_pub_files.xlsx", dir = "oamonitor")
+```
+
+```
+## New names:
+## * File -&gt; File...2
+## * File -&gt; File...3
+```
+
+```r
+glimpse(df)
+```
+
+```
+## Rows: 8,747
+## Columns: 27
+## $ org_unit                                                       &lt;chr&gt; "UMC Utrecht", "UMC Utrecht", "UMC Utrecht…
+## $ `Publication category-1`                                       &lt;chr&gt; "Academic", "Academic", "Academic", "Acade…
+## $ `Type-2`                                                       &lt;chr&gt; "Contribution to journal - Article", "Cont…
+## $ `Peer-reviewed-3`                                              &lt;chr&gt; "Peer-reviewed", "Peer-reviewed", "Peer-re…
+## $ system_id                                                      &lt;chr&gt; "33753105", "27546786", "33198824", "32436…
+## $ `APA-5`                                                        &lt;chr&gt; "Cross-Disorder Group of the Psychiatric G…
+## $ `Title of the contribution in original language-6`             &lt;chr&gt; "Genomic Relationships, Novel Loci, and Pl…
+## $ issn                                                           &lt;chr&gt; "0092-8674", "1619-7070", "1522-1946", "00…
+## $ `Journal &gt; Journal-8`                                          &lt;chr&gt; "Cell", "European Journal of Nuclear Medic…
+## $ doi                                                            &lt;chr&gt; "10.1016/j.cell.2019.11.020", "10.1007/s00…
+## $ `Electronic version(s) of this work-10`                        &lt;chr&gt; "10.1016/j.cell.2019.11.020Final published…
+## $ `Open Access status-11`                                        &lt;chr&gt; "Closed", "Closed", "Closed", "Closed", "O…
+## $ `Electronic version(s) of this work &gt; Document version-12`     &lt;chr&gt; "Final published version, Final published …
+## $ `Electronic version(s) of this work &gt; File &gt; File name-13`     &lt;chr&gt; "luykx.pdf", "aalbersberg.pdf", "abawi.pdf…
+## $ `Transfer publication to repository-14`                        &lt;chr&gt; "Yes", "Yes", "No", "Yes", "Yes", "Yes", "…
+## $ eissn                                                          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ source                                                         &lt;chr&gt; "UMC-Monitoring_OA-2019-9_03_20-inclfilena…
+## $ `Title of the contribution in original language-2`             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Contributors-3`                                               &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Journal &gt; Journal-4`                                          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Open Access status-7`                                         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Electronic version(s) of this work &gt; Document version-8`      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Electronic version(s) of this work &gt; Public access to file-9` &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Open Access embargo date-10`                                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Journal &gt; Journal &gt; RoMEO colour-11`                          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Electronic version(s) of this work-12`                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ `Keywords in 'Library Keywords'-14`                            &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+```
+
+---
+# Load external data
+
+- DOAJ (via API)
+- Unpaywall (via API)
+- VSNU (from excel)
+
+Running APIs takes a while (several hours), so the function contains the option to save, and then reload the data.
+
+
+```
+## Parsed with column specification:
+## cols(
+##   .default = col_character(),
+##   created_date = col_datetime(format = ""),
+##   last_updated = col_datetime(format = ""),
+##   bibjson.active = col_logical(),
+##   bibjson.allows_fulltext_indexing = col_logical(),
+##   bibjson.publication_time = col_double(),
+##   bibjson.oa_start.year = col_double(),
+##   bibjson.apc.average_price = col_double(),
+##   bibjson.plagiarism_detection.detection = col_logical(),
+##   bibjson.article_statistics.statistics = col_logical(),
+##   bibjson.author_copyright.copyright = col_logical(),
+##   bibjson.author_publishing_rights.publishing_rights = col_logical(),
+##   admin.ticked = col_logical(),
+##   admin.seal = col_logical(),
+##   bibjson.submission_charges.average_price = col_double()
+## )
+```
+
+```
+## See spec(...) for full column specifications.
+```
+
+```
+## Parsed with column specification:
+## cols(
+##   algorithm_version = col_double(),
+##   doi = col_character(),
+##   doi_resolver = col_character(),
+##   evidence = col_character(),
+##   free_fulltext_url = col_character(),
+##   is_boai_license = col_logical(),
+##   is_free_to_read = col_logical(),
+##   is_subscription_journal = col_logical(),
+##   license = col_character(),
+##   oa_color = col_character(),
+##   title = col_character(),
+##   url = col_character()
+## )
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D10937 /
+## R10937C4: got 'A haploid mammalian genetic screen identifies UBXD8 as a key determinant of HMGCR degradation and
+## cholesterol biosynthesis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D14143 /
+## R14143C4: got 'Megalencephalic leukoencephalopathy with subcortical cysts: characterization of disease variants'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21066 /
+## R21066C4: got 'Intrathecal morphine for laparoscopic segmental colonic resection as part of an enhanced recovery
+## protocol; a randomized controlled trial.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21067 /
+## R21067C4: got 'How do Attending Physicians Prepare Residents to Deliver High-Value, Cost-Conscious Care?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21068 /
+## R21068C4: got 'When teachers meet in interdisciplinary teams: hangouts, distribution centers and melting pots'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21069 /
+## R21069C4: got 'Happy despite pain: a randomized controlled trial of an 8-week internet-delivered positive psychology
+## intervention for enhancing well-being in patients with chronic pain'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21070 /
+## R21070C4: got 'Hyperlactatemia after intracranial tumor surgery does not affect 6-month survival - a retrospective
+## case series'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21071 /
+## R21071C4: got 'Effects of Hearing Impairment and Hearing Aid Amplification on Listening Effort - A Systematic
+## Review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21072 /
+## R21072C4: got 'Improving the Efficiency of Speech-In-Noise Hearing Screening Tests'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21073 /
+## R21073C4: got 'Same or Different: the Overlap Between Children With Auditory Processing Disorders and Children With
+## Other Developmental disorders: A Systematic Review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21074 /
+## R21074C4: got 'Discrimination of Voice Pitch and Vocal-Tract Length in Cochlear Implant Users'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21075 /
+## R21075C4: got 'Use of Electrically Evoked Compound Action Potentials for Cochlear Implant Fitting: A Systematic
+## Review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21076 /
+## R21076C4: got 'Relations between self-reported daily-life fatigue, hearing status and pupil dilation during a speech
+## perception in noise task'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21077 /
+## R21077C4: got 'Speech Recognition Abilities in Normal-Hearing Children Aged 4 to 12 Years in Stationary and
+## Interrupted Noise'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21078 /
+## R21078C4: got 'Effects of additional low-pass filtered speech on listening effort for noise-band vocoded speech in
+## quiet and in noise'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21079 /
+## R21079C4: got 'Perceptual discrimination of speaking style under cochlear implant simulation'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21080 /
+## R21080C4: got 'In a Concurrent Memory and Auditory Perception Task, the Pupil Dilation Response is more Sensitive to
+## Memory Load than to Auditory Stimulus Characteristics'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21081 /
+## R21081C4: got 'Effect of Audibility and Supra-Threshold Deficits on Speech Recognition for Listeners With Unilateral
+## Hearing Loss'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21082 /
+## R21082C4: got 'Test / Re-test Variability of the eCAP Threshold in Advanced Bionics Cochlear Implants'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21083 /
+## R21083C4: got 'Improving Sensitivity of the Digits-in-Noise Test Using Antiphasic Stimuli'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21084 /
+## R21084C4: got '10-Year Follow-Up Results of the Netherlands Longitudinal Study on Hearing: Trends of Longitudinal
+## Change in Speech Recognition in Noise'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21085 /
+## R21085C4: got 'Relationship between Speech Recognition in Quiet and Noise and Fitting Parameters, Impedances and
+## ECAP Thresholds in Adult Cochlear Implant Users'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21086 /
+## R21086C4: got 'The NIH minimal dataset for chronic low back pain: responsiveness and minimal clinically important
+## change'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21087 /
+## R21087C4: got 'Personal and Societal Impact of Low Back Pain; the Groningen Spine Cohort'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21088 /
+## R21088C4: got 'Nucleoplasty for the treatment of a contained Cervical Disk Herniation'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21089 /
+## R21089C4: got 'Renal Klotho is reduced in septic patients and pretreatment with recombinant Klotho attenuates organ
+## injury in LPS-challenged mice'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21090 /
+## R21090C4: got 'Treatment with acetylsalicylic acid reverses endotoxin tolerance in humans in vivo: a randomized
+## placebo-controlled study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21091 /
+## R21091C4: got 'Adjusting for disease severity across Intensive Care Units in multicenter studies'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21092 /
+## R21092C4: got 'Clinical examination for the prediction of mortality in the critically ill: the Simple Intensive Care
+## Studies-I'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21093 /
+## R21093C4: got 'Epidemiology and outcome of critically ill pediatric cancer and hematopoietic stem cell transplant
+## patients requiring continuous renal replacement therapy - a retrospective nationwide cohort study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21094 /
+## R21094C4: got 'Challenges of denosumab in giant cell tumor of bone, and other giant cell rich tumors of bone'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21095 /
+## R21095C4: got 'Treatment of cognitive deficits in brain tumor patients: current status and future directions'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21096 /
+## R21096C4: got 'Motivational profiles and motivation for lifelong learning of medical specialists'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21097 /
+## R21097C4: got 'Does a long-term quality and safety curriculum for healthcare professionals improve clinical
+## practice? An evaluation of quality improvement projects'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21098 /
+## R21098C4: got 'Self-tracking of physical activity in people with type 2 diabetes - a randomized controlled trial'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21099 /
+## R21099C4: got 'Rapid BRAF Mutation Tests in Patients with Advanced Melanoma: Comparison of Immunohistochemistry,
+## Droplet Digital Polymerase Chain Reaction and the Idylla Mutation Platform.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21100 /
+## R21100C4: got 'MR-Imaging enables accurate diagnosis and follow-up in uveal melanoma patients after vitrectomy'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21101 /
+## R21101C4: got 'Biomarkers, measured during therapy, for response of melanoma patients to immune checkpoint
+## inhibitors: a Systematic Review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21102 /
+## R21102C4: got 'Small cell carcinoma of the esophagus: a nationwide analysis of treatment and outcome at patient
+## level in locoregional disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21103 /
+## R21103C4: got 'How should the low anterior resection syndrome score be interpreted?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21104 /
+## R21104C4: got 'Survival bias in Mendelian randomization studies: a threat to causal inference'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21105 /
+## R21105C4: got 'Short and long term impact of remifentanil on thermal detection and pain thresholds after cardiac
+## surgery: a randomised controlled trial.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21106 /
+## R21106C4: got 'Efficacy of profound versus moderate neuromuscular blockade in enhancing postoperative recovery after
+## laparoscopic donor nephrectomy: a randomised controlled trial'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21107 /
+## R21107C4: got 'A systematic review of randomised controlled trials investigating prehabilitation before major intra-
+## abdominal cancer surgery: an analysis of prehabilitation content and outcome measures'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21108 /
+## R21108C4: got 'The effect of virtual reality exposure before elective day care surgery in reducing anxiety and pain
+## in children: a randomised controlled trial'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21109 /
+## R21109C4: got 'Short-term variability of repolarization is superior to other repolarization parameters in the
+## evaluation of diverse antiarrhythmic interventions in the chronic AV block dog'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21110 /
+## R21110C4: got 'Folic acid impairs the uptake of 5-methyltetrahydrofolate in human umbilical vascular endothelial
+## cells'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21111 /
+## R21111C4: got 'Sleep medications containing melatonin can potentially induce ventricular arrhythmias in structurally
+## normal hearts: a two-patient report'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21112 /
+## R21112C4: got 'Pharmacology of thiopurine therapy in inflammatory bowel disease and complete blood count outcomes: a
+## 5-year database study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21113 /
+## R21113C4: got 'Analytical Pitfalls of Therapeutic Drug Monitoring of Thiopurines in Inflammatory Bowel Disease
+## Patients'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21114 /
+## R21114C4: got 'Darunavir population pharmacokinetic model based on HIV outpatient data'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21115 /
+## R21115C4: got 'Ganciclovir Therapeutic Drug Monitoring: a case series'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21116 /
+## R21116C4: got 'Optimizing pediatric dosing recommendations and treatment management of antiretroviral drugs
+## utilizing Therapeutic Drug Monitoring data in children living with HIV'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21117 /
+## R21117C4: got 'Clinical consequences of antibody formation, serum concentrations and HLA-Cw6 status in psoriasis
+## patients on ustekinumab'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21118 /
+## R21118C4: got 'Heritability and genetic correlations of heart rate variability at rest and during stress in the Oman
+## Family Study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21119 /
+## R21119C4: got 'Childhood prediction models for hypertension later in life: a systematic review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21120 /
+## R21120C4: got 'Original'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21121 /
+## R21121C4: got 'EASY CONVERSION OF CARDIO-ANKLE VASCULAR INDEX (CAVI) INTO CAVI₀: INFLUENCE OF SCALE COEFFICIENTS'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21122 /
+## R21122C4: got 'Do Different Uses of Performance Measurement Systems in Hospitals Yield Different Outcomes?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21123 /
+## R21123C4: got 'Retinal hyperreflective foci in type 1 diabetes mellitus'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21124 /
+## R21124C4: got 'Retinal oximetry is altered in eyes with choroidal melanoma, but not in eyes with choroidal nevi'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21125 /
+## R21125C4: got 'Risk factors for the development of ocular hypertension after keratoplasty: A systematic review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21126 /
+## R21126C4: got 'Human parechovirus 1, 3 and 4 neutralizing antibodies in Dutch mothers and infants and their role in
+## protection against disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21127 /
+## R21127C4: got 'Core outcome measurement instruments for clinical trials in non-specific low back pain'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21128 /
+## R21128C4: got 'Quantifying visual allodynia across migraine subtypes: The Leiden Visual Sensitivity Scale'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21129 /
+## R21129C4: got 'Preferred self-administered questionnaires to assess fear of movement, coping, self-efficacy and
+## catastrophizing in people with musculoskeletal pain – A modified Delphi study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21130 /
+## R21130C4: got 'Itch sensitization? A systematic review of studies using quantitative sensory testing in patients
+## with chronic itch'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21131 /
+## R21131C4: got 'Factors associated with non-adherence to cardiovascular medications: a cross-sectional study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21132 /
+## R21132C4: got 'Effects of pharmacogenetic screening for CYP2D6 among elderly starting therapy with nortriptyline or
+## venlafaxine: a pragmatic randomized controlled trial (CYSCE trial)'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21133 /
+## R21133C4: got 'Biperiden selectively impairs verbal episodic memory in a dose- and time- dependent manner in healthy
+## subjects'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21134 /
+## R21134C4: got 'Work ability trajectories and retirement pathways: a longitudinal analysis of older American workers'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21135 /
+## R21135C4: got 'Physicians’ perspectives on person-related factors associated with work participation and methods
+## used to obtain information about these factors'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21136 /
+## R21136C4: got 'The implementation of workers’ health surveillance by occupational physicians: a survey study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21137 /
+## R21137C4: got 'Surgical management of a persistent stapedial artery: A review.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21138 /
+## R21138C4: got 'Three-year outcomes of a randomized controlled trial comparing a 4.5mm-wide to a 3.75mm-wide titanium
+## implant for bone conduction hearing'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21139 /
+## R21139C4: got 'Repeated audiometry after bacterial meningitis: consequences for future management'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21140 /
+## R21140C4: got 'Three-year clinical and audiological outcomes of percutaneous implants for bone conduction devices:
+## comparison between tissue preservation technique and tissue reduction technique'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21141 /
+## R21141C4: got 'Angular electrode insertion depth and speech perception in adults with a cochlear implant: a
+## systematic review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21142 /
+## R21142C4: got '18F-FDG PET/CT in the diagnosis and management of left ventricular assist device infections: A Case
+## Series and Review of the Literature.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21143 /
+## R21143C4: got 'Clinical examination for diagnosing circulatory shock'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21144 /
+## R21144C4: got 'Vitamin C: should we supplement?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21145 /
+## R21145C4: got 'Measuring and monitoring lean body mass in critical illness'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21146 /
+## R21146C4: got 'Resveratrol for patients with COPD: Hype or hope?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21147 /
+## R21147C4: got 'Regulation of Muscle Atrophy by MicroRNAs: 'AtromiRs' as Potential Target in Cachexia.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21148 /
+## R21148C4: got 'The Dynamic Nature of Food Reward Processing in the Brain'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21149 /
+## R21149C4: got 'Malnutrition in pulmonary arterial hypertension:'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21150 /
+## R21150C4: got 'The Right Treatment for the Right Ventricle'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21151 /
+## R21151C4: got 'Precision Medicine in Severe Pediatric Asthma – Challenges and Opportunities'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21152 /
+## R21152C4: got 'The different faces of the macrophage in asthma'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21153 /
+## R21153C4: got 'Patients' beliefs about medicine are associated with early thiopurine discontinuation in patients
+## with inflammatory bowel diseases'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21154 /
+## R21154C4: got 'Nodular regenerative hyperplasia in inflammatory bowel disease patients with allopurinol-thiopurine
+## co-therapy'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21155 /
+## R21155C4: got 'Immunosuppressive drug withdrawal late after liver transplantation improves the lipid profile and
+## reduces infections'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21156 /
+## R21156C4: got 'Prevalence of Dyspepsia in Patients with Cholecystolithiasis: a Systematic Review and Meta-Analysis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21157 /
+## R21157C4: got 'Isolated ileal blind loop inflammation after intestinal resection with ileocolonic anastomosis in
+## Crohn’s disease: an often neglected endoscopic finding with an unfavorable outcome'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21158 /
+## R21158C4: got 'A prospective study comparing patient reported outcomes in Crohn’s disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21159 /
+## R21159C4: got 'Profiling the patient with autoimmune hepatitis on calcineurin inhibitors: a real-world-experience'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21160 /
+## R21160C4: got 'Sepsis patients in the emergency department: stratification using Clinical Impression Score, PIRO
+## score or qSOFA score?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21161 /
+## R21161C4: got 'More dose-dependent side effects with mercaptopurine over azathioprine in IBD treatment due to
+## relatively higher dosing'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21162 /
+## R21162C4: got 'OPTIMIZING THIOPURINE THERAPY IN INFLAMMATORY BOWEL DISEASE AMONGST TWO REAL-LIFE INTERCEPT COHORTS:
+## EFFECT OF ALLOPURINOL CO-MEDICATION?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21163 /
+## R21163C4: got 'Effects of sodium glucose cotransporter 2 inhibitors on mineral metabolism in type 2 diabetes
+## mellitus'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21164 /
+## R21164C4: got 'Intra-tumoral injection of radioactive holmium-166 microspheres in recurrent head and neck squamous
+## cell carcinoma - preliminary results of first use'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21165 /
+## R21165C4: got 'Fibroblast Growth Factors in control of lipid metabolism: from biological function to clinical
+## application'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21166 /
+## R21166C4: got 'Senescent cells in the development of cardiometabolic disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21167 /
+## R21167C4: got 'The ins and outs of engineering functional tissues and organs: Evaluating the in-vitro and in-situ
+## processes'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21168 /
+## R21168C4: got 'Polyethylene glycol 3350 with electrolytes vs polyethylene glycol 4000 for constipation: a
+## randomized, controlled trial'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21169 /
+## R21169C4: got 'Anorectal manometry may reduce the number of rectal suction biopsy procedures needed to diagnose
+## Hirschsprung's disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21170 /
+## R21170C4: got 'Parent-child agreement on health related quality of life in children with functional constipation in
+## primary care'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21171 /
+## R21171C4: got 'Bladder symptoms in children with functional constipation: a systematic review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21172 /
+## R21172C4: got 'Evaluation of gastroesophageal reflux in children born with esophageal atresia using pH and impedance
+## monitoring'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21173 /
+## R21173C4: got 'Nurses Exploring the Spiritualty of Their'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21174 /
+## R21174C4: got 'Measuring the burden on family caregivers of patients with cancer: cross cultural translation and
+## psychometric testing of the Caregiver reaction Assessment Indonesian version'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21175 /
+## R21175C4: got 'Natural medicines for psychotic disorders A Systematic Review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21176 /
+## R21176C4: got 'Cultural Identity Confusion and Psychopathology: A Mixed-Methods Study among Refugees and Asylum
+## Seekers in the Netherlands'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21177 /
+## R21177C4: got 'Low prevalence of urethral lymphogranuloma venereum infections among men who have sex with men. A
+## prospective observational study, STI clinic in Amsterdam, the Netherlands'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21178 /
+## R21178C4: got 'What is the optimal time to retest patients with a urogenital chlamydia infection? A randomized
+## controlled trial'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21179 /
+## R21179C4: got 'Chemsex among men who have sex with men; a sexualized drug use survey among clients of the STI
+## outpatient clinic and users of a gay dating app in Amsterdam, the Netherlands'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21180 /
+## R21180C4: got 'STI positivity rate and treatment uptake among female and male sexual assault victims attending the
+## Amsterdam STI clinic between 2005 and 2016'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21181 /
+## R21181C4: got 'A mobile application to collect daily data on pre-exposure prophylaxis adherence and sexual behaviour
+## among men who have sex with men: use over time and comparability with conventional data collection'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21182 /
+## R21182C4: got 'Substance use and sexual risk behavior among male and transgender women sex workers at the
+## prostitution outreach center in Amsterdam, the Netherlands'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21183 /
+## R21183C4: got 'The Developmental Profile Inventory: Constructing a Clinically Useful Self-Report for Levels of
+## Psychodynamic Personality Functioning'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21184 /
+## R21184C4: got 'Surgical Indications and Outcomes of Mastectomy in Transmen: A Prospective Study of Technical and
+## Self-Reported Measures.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21185 /
+## R21185C4: got 'A systematic review and meta-analysis on the strength and consistency of the associations between
+## Dupuytren disease and diabetes mellitus, liver disease and epilepsy'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21186 /
+## R21186C4: got 'Subcutaneous Mastectomy Improves Satisfaction with the Body and Psychosocial Function in Trans Men;
+## Findings of a Cross-Sectional Study Using the BODY-Q Chest Module'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21187 /
+## R21187C4: got 'Effects of Medical Interventions on Gender Dysphoria and Body Image: a Follow-up Study.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21188 /
+## R21188C4: got 'Heart rate variability and its relation to chronic kidney disease: Results from the PREVEND Study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21189 /
+## R21189C4: got 'Enhancing placebo effects in somatic symptoms through oxytocin'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21190 /
+## R21190C4: got 'Mental health of a large group of adults with disorders of sex development in six European countries'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21191 /
+## R21191C4: got 'Dimensions of depressive symptoms and their association with hospitalization, mortality and Quality
+## of Life in dialysis patients: a cohort study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21192 /
+## R21192C4: got 'Antipruritic placebo effects by conditioning H1-antihistamine'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21193 /
+## R21193C4: got 'Placebo effects in the neuroendocrine system: conditioning of the oxytocin responses.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21194 /
+## R21194C4: got 'The costs of HIV treatment and care in Ghana: A longitudinal multi-site analysis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21195 /
+## R21195C4: got 'Risk factors for anal HSIL in HIV-positive MSM: is targeted screening possible?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21196 /
+## R21196C4: got 'Relevance of the drug-drug interactions between lidocaine and the pharmacokinetic enhancers ritonavir
+## and cobicistat'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21197 /
+## R21197C4: got 'THE USE OF MOLECULAR MARKERS FOR CERVICAL SCREENING OF WOMEN LIVING WITH HIV IN SOUTH AFRICA'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21198 /
+## R21198C4: got 'Perfusion-CT data for acute ischemic stroke evaluation using RAPID software: pitfalls of automated
+## post-processing'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21199 /
+## R21199C4: got 'A Single-Arm, Multi-Center Validation Study of Prostate Cancer Localization and Aggressiveness with a
+## Quantitative Multiparametric MRI Approach'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21200 /
+## R21200C4: got 'Can Ex-Vivo MRI of Rectal Cancer Specimens Improve the Mesorectal Lymph Node Yield for Pathological
+## Examination?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21201 /
+## R21201C4: got 'Radium-223 therapy in patients with advanced castration-resistant prostate cancer with bone
+## metastases. Lessons from daily practice.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21202 /
+## R21202C4: got 'Minimal-invasive robot-assisted image-guided resection of PSMA-positive lymph nodes in recurrent
+## prostate cancer'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21203 /
+## R21203C4: got 'Added value of ultra-low dose computed tomography, dose equivalent to chest X-ray radiography, for
+## diagnosing chest pathology'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21204 /
+## R21204C4: got 'Organ-specific differences in endothelial permeability-regulating molecular responses in mouse and
+## human sepsis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21205 /
+## R21205C4: got '(Low serum Angiopoietin-1, high serum Angiopoietin-2, and high Ang-2/Ang-1 protein ratio are
+## associated with early onset sepsis in Surinamese newborns)'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21206 /
+## R21206C4: got 'Early heterogenic response of renal microvasculature to hemorrhagic shock'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21207 /
+## R21207C4: got 'Partial deletion of Tie2 affects microvascular endothelial responses to critical illness in a
+## vascular bed and organ-specific way'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21208 /
+## R21208C4: got 'renal resistive index: response to shock and its determinants in critically ill patients'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21209 /
+## R21209C4: got 'Tenascin C plasma levels in critically ill patients with or without sepsis: A multicentre
+## observational study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21210 /
+## R21210C4: got 'Mucus microbiome of anastomotic tissue during surgery has predictive value for colorectal anastomotic
+## leakage'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21211 /
+## R21211C4: got 'Correlation between Pathologic Complete Response in the Breast and absence of Axillary Lymph Node
+## Metastases after Neoadjuvant Systemic Therapy'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21212 /
+## R21212C4: got 'Decreasing trends in intestinal resection and re-resection in Crohn’s disease: a nationwide cohort
+## study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21213 /
+## R21213C4: got 'The Effect of Perioperative Music on Medication Requirement and Hospital Length of Stay: A Meta-
+## analysis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21214 /
+## R21214C4: got 'An Easy and Sensitive Method to Profile the Antibody Specificities of HLA-Specific Memory B Cells'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21215 /
+## R21215C4: got 'Ex situ machine perfusion of human donor livers via the surgically reopened umbilical vein: a proof
+## of concept'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21216 /
+## R21216C4: got 'The implementation of a multidisciplinary approach for potential organ donors in the emergency
+## department'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21217 /
+## R21217C4: got 'The Authors’ Reply to Letter to the Editor, Re: Biliary Bicarbonate, pH and Glucose Are Suitable
+## Biomarkers of Biliary Viability During Ex Situ Normothermic Machine Perfusion of Human Donor Livers'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21218 /
+## R21218C4: got 'THE ASSOCIATION BETWEEN CYTOMEGALOVIRUS INFECTION AND CARDIAC ALLOGRAFT VASCULOPATHY IN THE ERA OF
+## ANTIVIRAL VALGANCICLOVIR PROPHYLAXIS'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21219 /
+## R21219C4: got 'Long term graft survival and graft function following pregnancy in kidney transplant recipients: a
+## systematic review and meta-analysis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21220 /
+## R21220C4: got 'Liposomal delivery improves the efficacy of prednisolone to attenuate renal inflammation in a mouse
+## model of acute renal allograft rejection'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21221 /
+## R21221C4: got 'IMPROVED GLUCOSE TOLERANCE IN A KIDNEY TRANSPLANT RECIPIENT WITH TYPE 2 DIABETES MELLITUS AFTER
+## SWITCHING FROM TACROLIMUS TO BELATACEPT: A CASE REPORT AND REVIEW OF POTENTIAL MECHANISMS'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21222 /
+## R21222C4: got 'Early Steroid Withdrawal Compared to Standard Immunosuppression in Kidney Transplantation - Interim
+## analysis of the ALLEGRO (Amsterdam - Leiden - Groningen) Randomized Controlled Trial'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21223 /
+## R21223C4: got 'Assessing Fitness To Drive in Patients with Different Types of Dementia'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21224 /
+## R21224C4: got 'Management of neurosarcoidosis: a clinical challenge'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21225 /
+## R21225C4: got 'Advance in genetics of migraine'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21226 /
+## R21226C4: got 'The effect of response frequency on cognitive brain activity during an alertness task'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21227 /
+## R21227C4: got 'A review of neurocognitive functioning and risk for psychopathology in sex chromosome trisomy
+## (47,XXY, 47,XXX, 47, XYY)'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21228 /
+## R21228C4: got 'Understanding and predicting the longitudinal course of dementia'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21229 /
+## R21229C4: got 'Psychosis and urbanicity – a review of the recent literature from epidemiology to neurourbanism'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21230 /
+## R21230C4: got 'rTMS treatment for depressive disorders: current knowledge and future directions'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21247 /
+## R21247C4: got 'How convenient!? Adolescents’ vistas on food competences in a convenience context'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21297 /
+## R21297C4: got 'Tackling Big Deals: the experience of Maastricht University'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21298 /
+## R21298C4: got 'Using PLS path modeling in new technology research: updated guidelines'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21299 /
+## R21299C4: got 'Shrinking core? Exploring the differential agenda setting power of traditional and personalized news
+## media'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D21333 /
+## R21333C4: got 'The development of the ‘Water campaign’: combining social marketing and intervention mapping'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24072 /
+## R24072C4: got 'Ex situ machine perfusion of human donor livers via the surgically reopened umbilical vein: a proof
+## of concept'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24709 /
+## R24709C4: got 'EEPD1 Is a Novel LXR Target Gene in Macrophages Which Regulates ABCA1 Abundance and Cholesterol
+## Efflux'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24710 /
+## R24710C4: got 'Prognostic Hemostasis Biomarkers in Acute Ischemic Stroke: A systematic Review'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24711 /
+## R24711C4: got 'Arrhythmogenic Right Ventricular Cardiomyopathy-Associated Desmosomal Variants Are Rarely De Novo:
+## Segregation and Haplotype Analysis of a Multinational Cohort'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24712 /
+## R24712C4: got 'Impaired Health Status, Psychological Distress,'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24713 /
+## R24713C4: got 'The Identification of 64 Novel Genetic Loci Provides an Expanded View on the Genetic Architecture of
+## Coronary Artery Disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24714 /
+## R24714C4: got 'The Influence of DASH-type Diet, Known Genetic Variants and their Interplay on Blood Pressure in
+## Early-childhood: ABCD Study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24715 /
+## R24715C4: got 'The Utility-Weighted Modified Rankin Scale as Primary Outcome in Stroke Trials: A Simulation Study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24716 /
+## R24716C4: got 'Prediction models for clinical outcome after a carotid revascularization procedure: an external
+## validation study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24717 /
+## R24717C4: got 'Effect of workflow improvements in endovascular stroke treatment: A systematic review and meta-
+## analysis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24718 /
+## R24718C4: got 'Intracranial carotid artery calcification and effect of endovascular stroke treatment: a MR CLEAN
+## subgroup analysis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24719 /
+## R24719C4: got 'Personalized Prehospital Triage in Acute Ischemic Stroke'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24720 /
+## R24720C4: got 'Safety of carotid revascularization in patients with a history of coronary heart disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24721 /
+## R24721C4: got 'Endovascular Treatment: The Role of Dominant Caliber M2 Segment Occlusion in Ischemic Stroke'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24722 /
+## R24722C4: got 'Does sex modify the effect of endovascular treatment for ischemic stroke? A subgroup analysis of
+## seven randomized trials'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24723 /
+## R24723C4: got 'The effect of inter-hospital transfer on endovascular treatment for acute ischemic stroke'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24724 /
+## R24724C4: got 'Intracranial cerebrospinal fluid volume as a predictor of malignant middle cerebral artery
+## infarction'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24725 /
+## R24725C4: got 'Periprocedural intravenous heparin during endovascular treatment for ischemic stroke: results from
+## the MR CLEAN Registry'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24726 /
+## R24726C4: got 'Brain Activity and Cerebral Oxygenation after Perinatal Arterial Ischemic Stroke are Associated with
+## Neurodevelopment'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24727 /
+## R24727C4: got 'Diagnostic accuracy of the Explicit Diagnostic Criteria for TIA: a validation study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24728 /
+## R24728C4: got 'NIH Stroke Scale: an alternative primary outcome measure for trials of acute treatment for ischemic
+## stroke'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24729 /
+## R24729C4: got 'EXPLORING THE COST-EFFECTIVENESS OF MECHANICAL THROMBECTOMY BEYOND SIX HOURS FOLLOWING ADVANCED
+## IMAGING IN THE UK'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24730 /
+## R24730C4: got 'Divorce reform in Egypt and Morocco: Men and women navigating rights and duties'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24731 /
+## R24731C4: got 'Khul: Local contours of a global phenomenon'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24733 /
+## R24733C4: got 'Infallible or Final?: Revisiting the Legitimacy of the International Court of Justice as the
+## “Invisible” International Supreme Court'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24734 /
+## R24734C4: got 'Seeking Refuge: Grotius on Exile, Expulsion and Asylum'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24735 /
+## R24735C4: got 'The Pirate and the Admiral: Europeanisation and Globalisation of Maritime Conflict Management'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24737 /
+## R24737C4: got 'Refining intractability: A case study of entrapment in the Syrian civil war'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24741 /
+## R24741C4: got 'The Netherlands: The 2018 Agreement between The Ocean Cleanup and the Netherlands'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24742 /
+## R24742C4: got 'The EU’s Regulation on the Sustainable Management of External Fishing Fleets: International and
+## European Law Perspectives'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24744 /
+## R24744C4: got 'European Court of Human Rights'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24745 /
+## R24745C4: got 'European Court of Human Rights'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24746 /
+## R24746C4: got 'European Court of Human Rights'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24758 / R24758C4: got 'States’ Varied Compliance with International
+## Anti-money Laundering Standards for Legal
+## Professionals'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24759 / R24759C4: got 'Transitional Justice, International Law and
+## the United Nations'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24765 /
+## R24765C4: got 'Victims as a Third Party: Empowerment of Victims?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24766 / R24766C4: got 'The Value of International Criminal Justice: How
+## Much International Criminal Justice Can the World
+## Afford?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24767 / R24767C4: got 'Punishment in Negotiated Transitions: The
+## Case of the Colombian Peace Agreement with
+## the farc-ep'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24768 / R24768C4: got 'Punishing Core Crimes in Ethiopia: Analysis of the
+## Domestic Practice in Light of and in Comparison,
+## with Sentencing Practices at the unicts and the icc'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24769 /
+## R24769C4: got 'Intersectionality and Transformative Reparations: The Case of Colombian Marginal Youths'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24774 /
+## R24774C4: got 'Transforming Migrants into ‘Real’ Citizens — EU Citizenship and Some Unfulfilled Promises'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24775 /
+## R24775C4: got 'Exploring the links between residence and social rights for economically inactive EU citizens'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24778 / R24778C4: got 'EU Competence in the Area of Procedural Criminal
+## Law: Functional vs. Self-standing Approximation of
+## Procedural Rights and Their Progressive Effect on
+## the Charter’s Scope of Application'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24783 /
+## R24783C4: got 'Children’s Representation in Family Law Proceedings'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24784 / R24784C4: got 'Access to Justice for Children: Towards a Specific
+## Research and Implementation Agenda'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24785 / R24785C4: got 'The Principle of Evolving Capacities under the UN
+## Convention on the Rights of the Child'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24799 /
+## R24799C4: got 'The Digital Unfitness of Mutual Legal Assistance'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24800 / R24800C4: got 'Human Rights and Climate Change
+## Protecting the Right to Life of Individuals of Present and Future Generations'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24801 / R24801C4: got 'E.T. Phoned Home…They Know
+## The Extraterritorial Application of Human Rights Treaties in the Context of
+## Foreign Surveillance'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24811 /
+## R24811C4: got 'Case law of the court of Justice of the European union and the general court: Reported Period
+## 15.09.2018-15.11.2018'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24812 /
+## R24812C4: got 'Case Law of the Court of Justice of the European Union and the General Court: Reported Period
+## 15.11.2018-13.02.2019'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24813 /
+## R24813C4: got 'Case law of the court of Justice of the European union and the general court: Reported Period
+## 14.02.2019-01.07.2019'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24815 /
+## R24815C4: got 'Remedies for human rights violations caused by climate change'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24816 /
+## R24816C4: got 'Policy Integration for Sustainable Development through Multilateral Environmental Agreements'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24823 /
+## R24823C4: got 'Living Without the Appellate Body: Multilateral, Bilateral and Plurilateral Solutions to the WTO
+## Dispute Settlement Crisis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24826 /
+## R24826C4: got 'The international covenant on civil and political rights and the “right to be protected against
+## incitement”'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24836 / R24836C4: got 'Regulation of Crypto Tokens and Initial Coin
+## Offerings in the EU'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24837 /
+## R24837C4: got 'Democracy in retreat: Two examples of numeric comparative law and governance'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24843 / R24843C4: got 'Coming Up Short: Policewomen and Indirect
+## Height Discrimination in eu Law'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24844 / R24844C4: got 'Discrimination of Young Workers: To be Justified or
+## not to be Justified?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D24845 / R24845C4: got 'ictu v. Ireland: Expanding the Scope of
+## Self-employed Workers Entitled to Collective
+## Bargaining Rights in Relation to Competition
+## Law Prohibitions'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26824 /
+## R26824C4: got 'Work-relatedness of lumbosacral radiculopathy syndrome: review and dose-response meta-analysis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26825 /
+## R26825C4: got 'Expanding the ADCY5 phenotype towards spastic paraparesis; a mutation in the M2 domain'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26826 /
+## R26826C4: got 'Bioenergetics in fibroblasts of Huntington disease patients are associated with age of onset'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26827 /
+## R26827C4: got 'Disease activity following pregnancy-related discontinuation of natalizumab in multiple sclerosis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26828 /
+## R26828C4: got 'Predicting major bleeding in non-cardioembolic stroke patients on'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26829 /
+## R26829C4: got 'UFM1 founder mutation in the Roma population causes recessive variant of H-ABC'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26830 /
+## R26830C4: got 'Apathy is associated with incident dementia in community-dwelling older people'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26831 /
+## R26831C4: got 'Early time course of major bleeding on antiplatelet therapy after TIA or ischemic stroke'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26832 /
+## R26832C4: got 'Clinical value of neurofilament and phosphotau/tau ratio in the frontotemporal dementia spectrum'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26833 /
+## R26833C4: got 'Long-term Neuropsychological Outcome Following Pediatric Anti-NMDAR Encephalitis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26834 /
+## R26834C4: got 'Overlap between age-of-onset and disease progression determinants in Huntington disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26835 /
+## R26835C4: got '3 Tesla MRI does not Improve the Diagnosis of Multiple Sclerosis - a Multicenter Study'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26836 /
+## R26836C4: got 'A score that predicts one year functional status in anti-NMDA receptor encephalitis patients'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26837 /
+## R26837C4: got 'Large scale plasma metabolome analysis reveals alterations in HDL metabolism in migraine'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26838 /
+## R26838C4: got 'Evaluation of seizure treatment in anti-LGI1, anti-NMDAR, and anti-GABABR encephalitis'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26839 /
+## R26839C4: got 'Diagnosing and quantifying a common deficit in multiple sclerosis: internuclear ophthalmoplegia'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26840 /
+## R26840C4: got 'Alzheimer Disease biomarkers may aid in the prognosis of MCI cases initially reverted to normal'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26841 /
+## R26841C4: got 'Lower extremity muscle pathology in myotonic dystrophy type 1 assessed by quantitative MRI'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26842 /
+## R26842C4: got 'Treatment effects and comorbid diseases in 58 patients with visual snow'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26843 /
+## R26843C4: got 'Haemoglobin and anaemia in relation to dementia risk and accompanying changes on brain MRI.'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26844 /
+## R26844C4: got 'Subcortical heterotopic gray matter brain malformations: classification study of 107 individuals'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26845 /
+## R26845C4: got 'Large variation in effects during 10-years of enzyme-therapy in adults with Pompe disease'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26846 /
+## R26846C4: got 'Statistical significance versus clinical importance of observed effect sizes: what do P-values and
+## confidence intervals really represent?'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26847 /
+## R26847C4: got 'Correlation Coefficients: Appropriate Use and Interpretation'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26848 /
+## R26848C4: got 'Repeated Measures Designs: Analysis of Longitudinal and Correlated Data'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26849 /
+## R26849C4: got 'Survival Analysis and Interpretation of Time-to-Event Data: The Tortoise and the Hare'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26850 /
+## R26850C4: got 'Comparison of a novel cadaver model (Fix for Life) with the formalin-fixed cadaver and manikin model
+## for suitability and realism in airway management training'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26851 /
+## R26851C4: got 'Diagnostic Testing and Decision-Making: Beauty is Not Just in the Eye of the Beholder'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26852 /
+## R26852C4: got 'A systematic review and meta-analysis of virtual reality in pediatrics: effects on pain and anxiety'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26950 /
+## R26950C4: got 'A validation study of the Fitbit One in daily life using different time-intervals'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26951 /
+## R26951C4: got 'Sucrose but Not Nitrate Ingestion Reduces Strenuous Cycling-induced Intestinal Injury'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26952 /
+## R26952C4: got 'Exercise-induced changes in soluble ST2 concentrations in marathon runners'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26953 /
+## R26953C4: got 'Advanced age redistributes positive but not negative leg joint work during walking'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26954 /
+## R26954C4: got 'Blood flow restriction only increases myofibrillar protein synthesis with exercise'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26955 /
+## R26955C4: got 'Association between Lifelong Physical Activity and Disease Characteristics in HCM'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26971 /
+## R26971C4: got 'Implementation of a Personalized, Cost-Effective Physical Therapy Approach (Coach2Move) for Older
+## Adults: Barriers and Facilitators'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D26972 /
+## R26972C4: got 'When something is at stake: differences in soccer performance in 11 vs. 11 during official matches
+## and training games'
+```
+
+```
+## Warning in read_fun(path = enc2native(normalizePath(path)), sheet_i = sheet, : Expecting logical in D27018 /
+## R27018C4: got 'A novel treatment for anterior shoulder instability; A biomechanical comparison between a patient-
+## specific implant and the Latarjet procedure'
+```
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+#
+
+
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

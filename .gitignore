@@ -1,0 +1,10 @@
+# local hidden folders
+reference/
+presentations/oamonitor
+
+# R additional
+.Rproj.user
+
+# Mac specific
+.DS_Store
+.Rhistory
