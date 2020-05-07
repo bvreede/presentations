@@ -93,7 +93,7 @@ Ensure all files are placed in the same folder.
 ---
 # Load data
 
-```{r}
+```{r, message=F}
 df <- open_everything(file="oamonitor/config_pub_files.xlsx", dir = "oamonitor")
 
 glimpse(df)
@@ -108,7 +108,7 @@ glimpse(df)
 
 Running APIs takes a while (several hours), so the function contains the option to save, and then reload the data.
 
-```{r, echo=F}
+```{r, message=F, warning=F, error=F}
 doajdf <- get_doaj(df, source="oamonitor/doaj_from_issn_2020-03-09.csv")
 upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-03-09.csv")
 vsnudf <- get_vsnu("oamonitor/VSNU-cummulatief_WOA20200302.xlsx")
@@ -183,10 +183,11 @@ Seems easy but...
 df <- read_excel("oamonitor/Report OA TU Delft 2019 -  20200420_FVC.xlsx")
 ```
 
-Plus some `dplyr` magic.
+Plus some `dplyr` magic, and renaming columns manually...
 
 ```{r, include=F}
 df <- df %>%
+  filter(`Document type`=="Journal") %>%
   mutate(doi = clean_doi(`DOI - clean`)) %>%
   separate_rows(`ISSN ALL`, sep=";") %>%
   mutate(issn = clean_issn(`ISSN ALL`)) %>%
@@ -233,27 +234,44 @@ df <- df %>%
   mutate(source = "TU Delft")
 ```
 
----
-# Columns now created
-
+... gets us the columns we need
 ```{r}
-df %>% select(org_unit, doi, issn) %>% head(10)
+df %>% 
+  select(system_id, org_unit, doi, issn, source) %>%
+  head(10)
 ```
 
 ---
 # Loading external data and classifying
 
-```{r, echo=F}
+Normally we would run the APIs to gather data:
+```r
+doajdf <- get_doaj(df, source="api", save_results=T)
+upwdf <- get_upw(df, source="api", email="b.m.i.vreede@uu.nl", save_results = T)
+```
+
+This takes several hours, but when the results are saved, they can be re-loaded:
+
+```{r message=FALSE, warning=FALSE, error=F}
 doajdf <- get_doaj(df, source="oamonitor/doaj_from_issn_2020-05-06.csv")
 upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-05-06.csv")
-
-df_class <- classify_oa(df, doajdf, vsnudf, upwdf)
 ```
+
+Now we can classify the data, applying the unpaywall and doaj data we just obtained
+(as well as VSNU data loaded earlier)
+```{r}
+df_class <- classify_oa(df,
+                        doajdf=doajdf,
+                        vsnudf=vsnudf,
+                        upwdf=upwdf,
+                        max_year=2019)
+```
+
 ---
 # Differences with TU monitor
 
 ```{r, echo=F, error=F, warning=F}
-oacols <- c("gray88","gold1","orange3","chartreuse3")
+oacols <- c("gray88","gold1","chartreuse3","orange3")
 
 df_sum <- df_class %>%
   group_by(OA_label_TU, OA_label) %>%
@@ -275,7 +293,6 @@ ggplot(df_sum,
          y = "Number of papers")
 
 ```
-
 ---
 # Reason for these differences
 
@@ -283,6 +300,66 @@ ggplot(df_sum,
 - Differences in unpaywall color between measuring dates
 - decision to label Unpaywall Gold as Gold instead of Hybrid
 - others?
+
+---
+
+# Adding custom labels
+
+Using two columns in the Delft data:
+- Taverne
+- Presence of publication in repository
+
+We make an excel with labels, listing the unique IDs of papers:
+
+![custom_labels](images/custom_labels.png)
+---
+
+# Re-classifying the data
+
+When applying the classification function, we now include the custom data:
+
+```{r}
+df_class_custom <- classify_oa(df,
+                        doajdf=doajdf,
+                        vsnudf=vsnudf,
+                        upwdf=upwdf,
+                        max_year=2019,
+                        custom=T,
+                        custom_path="oamonitor/custom_labels.xlsx")
+
+
+df_class_custom %>% 
+  group_by(OA_label,OA_label_explainer) %>% 
+  summarise(papers = n())
+```
+
+---
+# Differences with custom data
+
+```{r, echo=F, error=F, warning=F}
+oacols <- c("gray88","gold1","chartreuse3","orange3")
+
+df_sum_custom <- df_class_custom %>%
+  group_by(OA_label_TU, OA_label) %>%
+  deduplicate() %>%
+  summarise(n_papers = n())
+
+ggplot(df_sum_custom,
+         aes(y = n_papers,
+             axis1 = OA_label_TU, axis2 = OA_label)) +
+    geom_alluvium(aes(fill = OA_label),
+                  width = 0, knot.pos = 0, reverse = FALSE) +
+    guides(fill = FALSE) +
+    geom_stratum(width = 1/8, reverse = FALSE) +
+    geom_text(stat = "stratum", infer.label = TRUE, reverse = FALSE) +
+    scale_x_continuous(breaks = 1:2, labels = c("TU", "OAmonitor")) +
+    scale_fill_manual(values = oacols) +
+    theme_bw() +
+    labs(title = "Differences between TU and OAmonitor",
+         y = "Number of papers")
+
+```
+
 
 ---
 # Further development
