@@ -66,6 +66,7 @@ Load the package (and some other libraries we'll use)
 library(OAmonitor)
 library(readxl)
 library(tidyverse)
+library(ggalluvial)
 ```
 
 ---
@@ -114,25 +115,57 @@ vsnudf <- get_vsnu("oamonitor/VSNU-cummulatief_WOA20200302.xlsx")
 ```
 
 ---
-#
+# Make the classification
 
+```{r}
+df_class <- classify_oa(df,
+                        doajdf=doajdf,
+                        vsnudf=vsnudf,
+                        upwdf=upwdf,
+                        max_year=2019)
+
+
+df_class %>% 
+  group_by(OA_label,OA_label_explainer) %>% 
+  summarise(papers = n())
+```
 
 ---
-#
+# How it works
 
+Uses information in a hierarchical way to arrive at a classification.
 
----
-#
-
-
----
-#
-
+![classify_oa](images/classify_oa.png)
 
 ---
-#
+# Make some images
 
+```{r}
+report_to_image(df_class)
+```
 
+---
+# Custom report
+
+![custom_report](images/custom_report.png)
+```r
+individual_reports(df_class, "oamonitor/custom_reports.xlsx")
+```
+
+---
+# Custom report
+
+Saved files include, per sub-report:
+- Bar plots (proportional and total)
+- Alluvial diagrams (total, showing OA strategy/classification)
+- Summarizing dataframe (as csv)
+
+.pull-left[
+![faculty_science](images/faculty_science.png)
+]
+.pull-right[
+![faculty_science](images/alluvial_science.png)
+]
 ---
 #
 

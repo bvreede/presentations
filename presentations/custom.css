@@ -44,6 +44,9 @@ a, a > code {
 
 /* IMAGES */
 img[alt=oanl] {height: 370px;}
+img[alt=classify_oa] {height: 450px;}
+img[alt=custom_report] {height: 270px;}
+img[alt=faculty_science] {height: 350px;}
 
 
 .large-left-column {

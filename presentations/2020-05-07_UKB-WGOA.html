@@ -73,6 +73,7 @@ Load the package (and some other libraries we'll use)
 library(OAmonitor)
 library(readxl)
 library(tidyverse)
+library(ggalluvial)
 ```
 
 ---
@@ -1688,25 +1689,76 @@ Running APIs takes a while (several hours), so the function contains the option 
 ```
 
 ---
-#
+# Make the classification
 
+
+```r
+df_class &lt;- classify_oa(df,
+                        doajdf=doajdf,
+                        vsnudf=vsnudf,
+                        upwdf=upwdf,
+                        max_year=2019)
+
+
+df_class %&gt;% 
+  group_by(OA_label,OA_label_explainer) %&gt;% 
+  summarise(papers = n())
+```
+
+```
+## # A tibble: 8 x 3
+## # Groups:   OA_label [4]
+##   OA_label OA_label_explainer papers
+##   &lt;chr&gt;    &lt;chr&gt;               &lt;int&gt;
+## 1 CLOSED   NONE                  371
+## 2 CLOSED   UPW (bronze)          418
+## 3 CLOSED   UPW (closed)         2441
+## 4 GOLD     DOAJ                 1862
+## 5 GREEN    UPW (green)           804
+## 6 HYBRID   UPW (gold)            337
+## 7 HYBRID   UPW (hybrid)          725
+## 8 HYBRID   VSNU                 1789
+```
 
 ---
-#
+# How it works
 
+Uses information in a hierarchical way to arrive at a classification.
 
----
-#
-
-
----
-#
-
+![classify_oa](images/classify_oa.png)
 
 ---
-#
+# Make some images
 
 
+```r
+report_to_image(df_class)
+```
+
+![](2020-05-07_UKB-WGOA_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+# Custom report
+
+![custom_report](images/custom_report.png)
+```r
+individual_reports(df_class, "oamonitor/custom_reports.xlsx")
+```
+
+---
+# Custom report
+
+Saved files include, per sub-report:
+- Bar plots (proportional and total)
+- Alluvial diagrams (total, showing OA strategy/classification)
+- Summarizing dataframe (as csv)
+
+.pull-left[
+![faculty_science](images/faculty_science.png)
+]
+.pull-right[
+![faculty_science](images/alluvial_science.png)
+]
 ---
 #
 
