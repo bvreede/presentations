@@ -1,0 +1,422 @@
+---
+title: "Monitoring Open Access in R"
+author: "Barbara Vreede & Kristina Hettne"
+output:
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts, 'custom.css']
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+# Access to publications
+
+Divided into the following subtypes:
+
+![oatypes](images/OA_types.png)
+
+| Category | Access type |
+|:---:|:---|
+| A | Gold |
+| B | Hybrid |
+| C | Green |
+| D | Closed |
+
+---
+# Why monitor the output?
+
+.pull-left-larger[
+- National reporting (and comparison)
+
+- Response to policy, local and national
+
+- Designing strategies to improve
+
+![oanl](images/NL_OA_2019.png)
+]
+--
+.pull-right-smaller[
+_Aren't we comparing apples and oranges?_
+
+_Rapid response is vital!_
+]
+---
+# Automating the monitoring
+
+For standardized and rapid reporting:
+
+![](images/poster_graphic.svg)
+
+---
+# Start your project
+
+1. Open Rstudio
+
+1. Go to: **File** > **New Project** > **New Directory** > **New Project**
+
+1. Give your project a name, and place it inside an accessible folder on your computer.
+
+1. Open an R script and save it inside your project folder: **File** > **New File** > **R Script**
+
+   You can now type R code in this script, and execute the code as follows:
+
+  - Place your cursor in the line of code you want to execute
+
+  - Press ![run](images/run.png) or ctrl + enter
+
+  - When running multiple lines: select all lines, then press ‘Run’ or ctrl+enter
+  
+1. Give it a try:
+```{r}
+mean(1:10)
+```
+
+
+---
+# Install the package
+
+NB: This only needs to be done once (except after updates!)
+
+
+1. Make sure `devtools` is installed:
+```r
+install.packages("devtools")
+```
+
+1. Install the OA monitor from [its github repository](https://github.com/bvreede/OAmonitor):
+```r
+devtools::install_github("https://github.com/bvreede/OAmonitor")
+```
+---
+# Load required libraries
+
+Load the package (and some other libraries we will use)
+```{r}
+library(OAmonitor)
+library(readxl)
+library(tidyverse)
+library(ggalluvial)
+```
+
+
+
+---
+# Input data
+
+- Likely the export from a CRIS, or download from an online database (e.g. Scopus).
+
+- May consist of multiple independent source files.
+
+- Must be tabular, and can be either csv (comma or semicolon-separated), tsv (tab-separated), xlsx or xls.
+
+- The workflow **requires** the following columns, which may or may not contain empty cells:
+
+| Column | Explanation | Empty cells? |
+|:---|:---|:---:|
+|Unique ID | source-specific ID | No |
+|Organization unit | e.g. departments, faculties (but can be anything) | No |
+|ISSN | max 2 columns (e.g. ISSN + eISSN) | Yes |
+|DOI | | Yes |
+
+- Columns do not need to be renamed prior to use (but relevant columns do require a unique name)
+
+
+---
+# Prepare the input
+
+1. [Download the excel template here](https://github.com/bvreede/OAmonitoring/blob/master/config/config_pub_files.xlsx).
+
+1. Fill out the template:
+  - Put each individual data file in a new column
+  - Fill out the name of each relevant column per data file.
+
+1. Ensure all source files are placed in the same folder (inside the project folder).
+
+1. Save the excel template inside the project folder.
+
+For example:
+![](images/input_excel.png)
+
+---
+# Load all data
+
+
+
+```{r, message=F}
+df <- open_everything(file="oamonitor/config_pub_files.xlsx", dir = "oamonitor")
+
+glimpse(df)
+```
+
+---
+# Load external data
+
+- DOAJ (via API)
+- Unpaywall (via API)
+- VSNU (from excel)
+
+Running APIs takes a while (several hours), so the function contains the option to save, and then reload the data.
+
+```{r, message=F, warning=F, error=F, cache=T}
+doajdf <- get_doaj(df, source="oamonitor/doaj_from_issn_2020-03-09.csv")
+upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-03-09.csv")
+vsnudf <- get_vsnu("oamonitor/VSNU-cummulatief_WOA20200302.xlsx")
+```
+
+---
+# Make the classification
+
+```{r}
+df_class <- classify_oa(df,
+                        doajdf=doajdf,
+                        vsnudf=vsnudf,
+                        upwdf=upwdf,
+                        max_year=2019)
+
+
+df_class %>% 
+  group_by(OA_label,OA_label_explainer) %>% 
+  summarise(papers = n())
+```
+
+---
+# How it works
+
+Uses information in a hierarchical way to arrive at a classification.
+
+![classify_oa](images/classify_oa.png)
+
+---
+# Make some images
+
+```{r}
+report_to_image(df_class)
+```
+
+---
+# Custom report
+
+![custom_report](images/custom_report.png)
+```r
+individual_reports(df_class, "oamonitor/custom_reports.xlsx")
+```
+
+---
+# Custom report
+
+Saved files include, per sub-report:
+- Bar plots (proportional and total)
+- Alluvial diagrams (total, showing OA strategy/classification)
+- Summarizing dataframe (as csv)
+
+.pull-left[
+![faculty_science](images/faculty_science.png)
+]
+.pull-right[
+![faculty_science](images/alluvial_science.png)
+]
+---
+# Data from Delft
+
+Seems easy but...
+
+![delft_data](images/delft_data.png)
+
+- no single organization unit column
+- no single ISSN column
+
+---
+# Instead of `open_everything`...
+
+```{r}
+df <- read_excel("oamonitor/Report OA TU Delft 2019 -  20200420_FVC.xlsx")
+```
+
+Plus some `dplyr` magic, and renaming columns manually...
+
+```{r, include=F}
+df <- df %>%
+  filter(`Document type`=="Journal") %>%
+  mutate(doi = clean_doi(`DOI - clean`)) %>%
+  separate_rows(`ISSN ALL`, sep=";") %>%
+  mutate(issn = clean_issn(`ISSN ALL`)) %>%
+  mutate(type = case_when(
+    !duplicated(UUID) ~ "issn",
+    T ~ "other")) %>%
+  pivot_wider(names_from = type, values_from = issn) %>%
+  mutate(type = case_when(
+    !is.na(issn) ~ "issn",
+    !is.na(other) ~ "other",
+    T ~ "neither"
+  ))
+
+df_keep <- df %>%
+  filter(type != "other") %>%
+  select(-other, -type)
+
+df_other <- df %>%
+  filter(type == "other") %>%
+  filter(!duplicated(UUID)) %>%
+  mutate(eissn = other) %>%
+  select(-issn, -other, -type)
+
+df <- full_join(df_keep,df_other,by="UUID", suffix = c("",".remove")) %>%
+  select(-ends_with(".remove"))
+
+rm(df_keep,df_other)
+
+df <- df %>%
+  pivot_longer(`01 - AE`:`12 - EXT`, names_to = "org_unit", values_to = "presence") %>%
+  filter(presence == "YES") %>%
+  select(-presence)
+
+df <- df %>%
+  mutate(OA_label_TU = case_when(
+    `CAT ALL` == "A" ~ "GOLD",
+    `CAT ALL` == "B" ~ "HYBRID", 
+    `CAT ALL` == "C" ~ "GREEN",
+    `CAT ALL` == "No OA" ~ "CLOSED",
+    T ~ "UNDETERMINED"))
+
+df <- df %>%
+  rename(system_id = UUID) %>%
+  mutate(source = "TU Delft")
+```
+
+... gets us the columns we need
+```{r}
+df %>% 
+  select(system_id, org_unit, doi, issn, source) %>%
+  head(10)
+```
+
+---
+# Loading external data and classifying
+
+Normally we would run the APIs to gather data:
+```r
+doajdf <- get_doaj(df, source="api", save_results=T)
+upwdf <- get_upw(df, source="api", email="b.m.i.vreede@uu.nl", save_results = T)
+```
+
+This takes several hours, but when the results are saved, they can be re-loaded:
+
+```{r message=FALSE, warning=FALSE, error=F}
+doajdf <- get_doaj(df, source="oamonitor/doaj_from_issn_2020-05-06.csv")
+upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-05-06.csv")
+```
+
+Now we can classify the data, applying the unpaywall and doaj data we just obtained
+(as well as VSNU data loaded earlier)
+```{r}
+df_class <- classify_oa(df,
+                        doajdf=doajdf,
+                        vsnudf=vsnudf,
+                        upwdf=upwdf,
+                        max_year=2019)
+```
+
+---
+# Differences with TU monitor
+
+```{r, echo=F, error=F, warning=F}
+oacols <- c("gray88","gold1","chartreuse3","orange3")
+
+df_sum <- df_class %>%
+  group_by(OA_label_TU, OA_label) %>%
+  deduplicate() %>%
+  summarise(n_papers = n())
+
+ggplot(df_sum,
+         aes(y = n_papers,
+             axis1 = OA_label_TU, axis2 = OA_label)) +
+    geom_alluvium(aes(fill = OA_label),
+                  width = 0, knot.pos = 0, reverse = FALSE) +
+    guides(fill = FALSE) +
+    geom_stratum(width = 1/8, reverse = FALSE) +
+    geom_text(stat = "stratum", infer.label = TRUE, reverse = FALSE) +
+    scale_x_continuous(breaks = 1:2, labels = c("TU", "OAmonitor")) +
+    scale_fill_manual(values = oacols) +
+    theme_bw() +
+    labs(title = "Differences between TU and OAmonitor",
+         y = "Number of papers")
+
+```
+---
+# Reason for these differences
+
+- Custom data from Pure (repository and Taverne information) - this data can be added to a custom label!
+- Differences in unpaywall color between measuring dates
+- decision to label Unpaywall Gold as Gold instead of Hybrid
+- others?
+
+---
+
+# Adding custom labels
+
+Using two columns in the Delft data:
+- Taverne
+- Presence of publication in repository
+
+We make an excel with labels, listing the unique IDs of papers:
+
+![custom_labels](images/custom_labels.png)
+---
+
+# Re-classifying the data
+
+When applying the classification function, we now include the custom data:
+
+```{r}
+df_class_custom <- classify_oa(df,
+                        doajdf=doajdf,
+                        vsnudf=vsnudf,
+                        upwdf=upwdf,
+                        max_year=2019,
+                        custom=T,
+                        custom_path="oamonitor/custom_labels.xlsx")
+
+
+df_class_custom %>% 
+  group_by(OA_label,OA_label_explainer) %>% 
+  summarise(papers = n())
+```
+
+---
+# Differences with custom data
+
+```{r, echo=F, error=F, warning=F}
+oacols <- c("gray88","gold1","chartreuse3","orange3")
+
+df_sum_custom <- df_class_custom %>%
+  group_by(OA_label_TU, OA_label) %>%
+  deduplicate() %>%
+  summarise(n_papers = n())
+
+ggplot(df_sum_custom,
+         aes(y = n_papers,
+             axis1 = OA_label_TU, axis2 = OA_label)) +
+    geom_alluvium(aes(fill = OA_label),
+                  width = 0, knot.pos = 0, reverse = FALSE) +
+    guides(fill = FALSE) +
+    geom_stratum(width = 1/8, reverse = FALSE) +
+    geom_text(stat = "stratum", infer.label = TRUE, reverse = FALSE) +
+    scale_x_continuous(breaks = 1:2, labels = c("TU", "OAmonitor")) +
+    scale_fill_manual(values = oacols) +
+    theme_bw() +
+    labs(title = "Differences between TU and OAmonitor",
+         y = "Number of papers")
+
+```
+
+
+---
+# Further development
+- Better tutorial
+- Finish the packaging & increase robustness
+- Improve pipeline, data, and move towards national use!
