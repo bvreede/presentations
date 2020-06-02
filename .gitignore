@@ -1,6 +1,9 @@
 # local hidden folders
 reference/
-presentations/oamonitor
+presentations/data
+
+# file hidden [should prob be removed from there]
+presentations/config_pub_files.xlsx
 
 # R additional
 .Rproj.user

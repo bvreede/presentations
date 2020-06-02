@@ -61,11 +61,17 @@ For standardized and rapid reporting:
 
 1. Give your project a name, and place it inside an accessible folder on your computer.
 
+1. Click 'Create Project'
 
+![newproject](images/newproject.png)
+
+_NB: no need to create a git repository or open in a new session._
 ---
 # Start your project (step 2)
 
-1. Open an R script and save it inside your project folder: **File** > **New File** > **R Script**
+1. Open an R script: **File** > **New File** > **R Script**
+
+1. Save it inside your project folder as `monitoring_script.R`
 
    You can now type R code in this script, and execute the code as follows:
 
@@ -75,14 +81,18 @@ For standardized and rapid reporting:
 
   - When running multiple lines: select all lines, then press ‘Run’ or ctrl+enter
   
-1. Give it a try:
-```{r}
-mean(1:10)
-```
+1. Give it a try! Type and execute the following line of code:
+    ```{r}
+    mean(1:10)
+    ```
 
 
 ---
 # Install the package
+
+#### The following (probably) only needs to be done once...
+... but you don't want to lose the code. So we will put it in the script.
+
 
 1. Make sure `devtools` is installed:
 ```r
@@ -94,19 +104,25 @@ install.packages("devtools")
 devtools::install_github("https://github.com/bvreede/OAmonitor")
 ```
 
-#### NB: this (probably) only needs to be done once...
-... but you don't want to lose the code.
+1. enter '3' not to update any packages
+
+--
+
+#### When you are done, place a # in front of these lines of code:
+```{r}
+# install.packages("devtools")
+# devtools::install_github("https://github.com/bvreede/OAmonitor")
+```
+
+
 ---
 # Load required libraries
 
 Load the package (and some other libraries we will use)
 ```{r}
 library(OAmonitor)
-library(readxl)
 library(tidyverse)
-library(ggalluvial)
 ```
-
 
 
 ---
@@ -139,7 +155,7 @@ library(ggalluvial)
   - Put each individual data file in a new column
   - Fill out the name of each relevant column per data file.
 
-1. Ensure all source files are placed in the same folder (inside the project folder).
+1. Place all source files in a subfolder of the project folder (e.g. `data/`).
 
 1. Save the excel template inside the project folder.
 
@@ -149,40 +165,78 @@ For example:
 ---
 # Load all data
 
+- Your **configuration file** (filled out template) can be anywhere;
+- Your **data files** are in a folder inside your project folder.
 
+![folderstructure](images/folderstructure.png)
+
+--
+
+Using the configuration file, you will now load all data into a **combined data frame**.
 
 ```{r, message=F}
-df <- open_everything(file="oamonitor/config_pub_files.xlsx", dir = "oamonitor")
+df <- open_everything(file = "config_pub_files.xlsx",
+                      dir = "data")
+```
+NB: `dir` is the folder where your data files are stored.
 
+---
+# Did it work?
+
+```{r}
 glimpse(df)
 ```
+
 
 ---
 # Using external data
 
-- VSNU (from an excel, will be provided)
+Data needed:
+- VSNU (from an excel; provided)
 - DOAJ (via API)
 - Unpaywall (via API)
 
 Running APIs takes a while (several hours), so the function contains the option to save, and then reload the data.
+
+1. Prepare the following lines of code, but not run them yet;
+
+1. Make sure that `save_results = T`, and fill out your own email address.
+
+1. Then select **both** lines and run them. Keep your computer open while this runs.
+
 ```r
 get_doaj(df, source = "api", save_results = T)
 
-get_upw(df, source = "api", email = YOUREMAIL@UNI.NL, save_results = T)
+get_upw(df, source = "api", email = "YOUREMAIL@UNI.NL", save_results = T)
 ```
+---
+# Before part 2
+
+- Please let us know if you have not yet received the VSNU data; we will send it to you.
+
+- We recommend placing the VSNU excel file in the `data/` folder of your project.
+
+- The DOAJ and UPW downloads will be placed in `data/clean/` (so it is useful if you already created the folder `data/`; if that does not exist, the program will create it for you).
+
+- Confirm that the code has run: you will see a confirmation in your console, and you will see files show up in `data/clean/`.
+
+- **If this does not happen**: please re-run the code (it will take a few hours), or get in touch with us.
+
+--
+
+## See you tomorrow!
 
 ---
 class: inverse, middle, center
 # Part 2
 
-
 ---
 # Load the existing data
 
 ```{r, message=F, warning=F, error=F}
-doajdf <- get_doaj(df, source="oamonitor/doaj_from_issn_2020-03-09.csv")
-upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-03-09.csv")
-vsnudf <- get_vsnu("oamonitor/VSNU-cummulatief_WOA20200302.xlsx")
+doajdf <- get_doaj(df, source="data/doaj_from_issn_2020-03-09.csv")
+upwdf <- get_upw(df, source="data/upw_from_doi_2020-03-09.csv")
+vsnudf <- get_vsnu("data/VSNU-cummulatief_WOA20200302.xlsx")
 ```
 
 ---
@@ -220,7 +274,7 @@ report_to_image(df_class)
 
 ![custom_report](images/custom_report.png)
 ```r
-individual_reports(df_class, "oamonitor/custom_reports.xlsx")
+individual_reports(df_class, "data/custom_reports.xlsx")
 ```
 
 ---
@@ -251,7 +305,7 @@ Seems easy but...
 # Instead of `open_everything`...
 
 ```{r}
-df <- read_excel("oamonitor/Report OA TU Delft 2019 -  20200420_FVC.xlsx")
+df <- readxl::read_excel("data/Report OA TU Delft 2019 -  20200420_FVC.xlsx")
 ```
 
 Plus some `dplyr` magic, and renaming columns manually...
@@ -324,8 +378,8 @@ upwdf <- get_upw(df, source="api", email="b.m.i.vreede@uu.nl", save_results = T)
 This takes several hours, but when the results are saved, they can be re-loaded:
 
 ```{r message=FALSE, warning=FALSE, error=F}
-doajdf <- get_doaj(df, source="oamonitor/doaj_from_issn_2020-05-06.csv")
-upwdf <- get_upw(df, source="oamonitor/upw_from_doi_2020-05-06.csv")
+doajdf <- get_doaj(df, source="data/doaj_from_issn_2020-05-06.csv")
+upwdf <- get_upw(df, source="data/upw_from_doi_2020-05-06.csv")
 ```
 
 Now we can classify the data, applying the unpaywall and doaj data we just obtained
@@ -342,6 +396,8 @@ df_class <- classify_oa(df,
 # Differences with TU monitor
 
 ```{r, echo=F, error=F, warning=F}
+library(ggalluvial)
+
 oacols <- c("gray88","gold1","chartreuse3","orange3")
 
 df_sum <- df_class %>%
@@ -396,7 +452,7 @@ df_class_custom <- classify_oa(df,
                         upwdf=upwdf,
                         max_year=2019,
                         custom=T,
-                        custom_path="oamonitor/custom_labels.xlsx")
+                        custom_path="data/custom_labels.xlsx")
 
 
 df_class_custom %>% 
