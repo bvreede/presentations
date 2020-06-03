@@ -82,7 +82,7 @@ _NB: no need to create a git repository or open in a new session._
   - When running multiple lines: select all lines, then press ‘Run’ or ctrl+enter
   
 1. Give it a try! Type and execute the following line of code:
-    ```{r}
+    ```{r first code}
     mean(1:10)
     ```
 
@@ -119,7 +119,7 @@ devtools::install_github("https://github.com/bvreede/OAmonitor")
 # Load required libraries
 
 Load the package (and some other libraries we will use)
-```{r}
+```{r load libraries}
 library(OAmonitor)
 library(tidyverse)
 ```
@@ -174,7 +174,7 @@ For example:
 
 Using the configuration file, you will now load all data into a **combined data frame**.
 
-```{r, message=F}
+```{r open everything, message=F}
 df <- open_everything(file = "config_pub_files.xlsx",
                       dir = "data")
 ```
@@ -183,7 +183,7 @@ NB: `dir` is the folder where your data files are stored.
 ---
 # Did it work?
 
-```{r}
+```{r check data}
 glimpse(df)
 ```
 
@@ -229,32 +229,80 @@ get_upw(df, source = "api", email = "YOUREMAIL@UNI.NL", save_results = T)
 ---
 class: inverse, middle, center
 # Part 2
+---
+# Did something go wrong? Not to worry!
+
+The following code will download mock files to finish the workshop.
+
+```r
+dir.create("testdata/")
+
+ghdir <- "https://github.com/bvreede/presentations/blob/master/presentations/mockdata/"
+files <- c("mock_config.xlsx","mock_doaj.csv","mock_upw.csv", "mock_vsnu.xlsx", "mockdata_dighum_2018.csv","mockdata_nice_2018.tsv")
+
+for(f in files){
+  download.file(
+    url = paste(ghdir, f, sep = ""),
+    destfile = paste("testdata/", f, sep = ""),
+    method = "curl")
+}
+```
+
+To load, run the following code (and skip the next few slides, until the classification):
+
+```r
+df <- open_everything(file = "testdata/mock_config.xlsx",
+                      dir = "testdata")
+vsnudf <- get_vsnu("testdata/mock_vsnu.xlsx")
+doajdf <- get_doaj(df, source="testdata/mock_doaj.csv")
+upwdf <- get_upw(df, source="testdata/mock_upw.csv")
+```
 
 ---
-# Load the existing data
 
-```{r, message=F, warning=F, error=F}
-doajdf <- get_doaj(df, source="data/doaj_from_issn_2020-03-09.csv")
-upwdf <- get_upw(df, source="data/upw_from_doi_2020-03-09.csv")
+# Load existing data: VSNU data
+
+1. Place the VSNU dataframe in your project (can be anywhere, but we recommend `data/`).
+
+1. Load it with `get_vsnu()`. You will get warnings. This has to do with the file itself, and does not create problems for the workflow. You can safely ignore this.
+
+```{r load vsnu data, message=F, warning=T, error=F}
 vsnudf <- get_vsnu("data/VSNU-cummulatief_WOA20200302.xlsx")
 ```
 
 ---
+# Load existing data: DOAJ and Unpaywall
+
+1. You probably already have this data loaded, unless you restarted your Rstudio since yesterday.
+
+1. Check your environment (top right window) for the presence of `doajdf` and `upwdf` (or whatever names you gave them yesterday).
+
+1. **Only if you do not have these objects**, you can load them from the saved files:
+
+```{r load classification data, message=F, warning=F, error=F}
+doajdf <- get_doaj(df, source="data/doaj_from_issn_2020-03-09.csv")
+upwdf <- get_upw(df, source="data/upw_from_doi_2020-03-09.csv")
+```
+
+NB: make sure to use the right path to where these files were saved in your system! Probably this is `data/clean/`. Obviously, make sure you use the right file names, too.
+
+---
 # Make the classification
 
-```{r}
+```{r classify}
 df_class <- classify_oa(df,
                         doajdf=doajdf,
                         vsnudf=vsnudf,
                         upwdf=upwdf,
                         max_year=2019)
+```
 
-
+Check the classification in your data:
+```{r first results}
 df_class %>% 
   group_by(OA_label,OA_label_explainer) %>% 
   summarise(papers = n())
 ```
-
 ---
 # How it works
 
@@ -292,143 +340,6 @@ Saved files include, per sub-report:
 ![faculty_science](images/alluvial_science.png)
 ]
 ---
-# Data from Delft
-
-Seems easy but...
-
-![delft_data](images/delft_data.png)
-
-- no single organization unit column
-- no single ISSN column
-
----
-# Instead of `open_everything`...
-
-```{r}
-df <- readxl::read_excel("data/Report OA TU Delft 2019 -  20200420_FVC.xlsx")
-```
-
-Plus some `dplyr` magic, and renaming columns manually...
-
-```{r, include=F}
-df <- df %>%
-  filter(`Document type`=="Journal") %>%
-  mutate(doi = clean_doi(`DOI - clean`)) %>%
-  separate_rows(`ISSN ALL`, sep=";") %>%
-  mutate(issn = clean_issn(`ISSN ALL`)) %>%
-  mutate(type = case_when(
-    !duplicated(UUID) ~ "issn",
-    T ~ "other")) %>%
-  pivot_wider(names_from = type, values_from = issn) %>%
-  mutate(type = case_when(
-    !is.na(issn) ~ "issn",
-    !is.na(other) ~ "other",
-    T ~ "neither"
-  ))
-
-df_keep <- df %>%
-  filter(type != "other") %>%
-  select(-other, -type)
-
-df_other <- df %>%
-  filter(type == "other") %>%
-  filter(!duplicated(UUID)) %>%
-  mutate(eissn = other) %>%
-  select(-issn, -other, -type)
-
-df <- full_join(df_keep,df_other,by="UUID", suffix = c("",".remove")) %>%
-  select(-ends_with(".remove"))
-
-rm(df_keep,df_other)
-
-df <- df %>%
-  pivot_longer(`01 - AE`:`12 - EXT`, names_to = "org_unit", values_to = "presence") %>%
-  filter(presence == "YES") %>%
-  select(-presence)
-
-df <- df %>%
-  mutate(OA_label_TU = case_when(
-    `CAT ALL` == "A" ~ "GOLD",
-    `CAT ALL` == "B" ~ "HYBRID", 
-    `CAT ALL` == "C" ~ "GREEN",
-    `CAT ALL` == "No OA" ~ "CLOSED",
-    T ~ "UNDETERMINED"))
-
-df <- df %>%
-  rename(system_id = UUID) %>%
-  mutate(source = "TU Delft")
-```
-
-... gets us the columns we need
-```{r}
-df %>% 
-  select(system_id, org_unit, doi, issn, source) %>%
-  head(10)
-```
-
----
-# Loading external data and classifying
-
-Normally we would run the APIs to gather data:
-```r
-doajdf <- get_doaj(df, source="api", save_results=T)
-upwdf <- get_upw(df, source="api", email="b.m.i.vreede@uu.nl", save_results = T)
-```
-
-This takes several hours, but when the results are saved, they can be re-loaded:
-
-```{r message=FALSE, warning=FALSE, error=F}
-doajdf <- get_doaj(df, source="data/doaj_from_issn_2020-05-06.csv")
-upwdf <- get_upw(df, source="data/upw_from_doi_2020-05-06.csv")
-```
-
-Now we can classify the data, applying the unpaywall and doaj data we just obtained
-(as well as VSNU data loaded earlier)
-```{r}
-df_class <- classify_oa(df,
-                        doajdf=doajdf,
-                        vsnudf=vsnudf,
-                        upwdf=upwdf,
-                        max_year=2019)
-```
-
----
-# Differences with TU monitor
-
-```{r, echo=F, error=F, warning=F}
-library(ggalluvial)
-
-oacols <- c("gray88","gold1","chartreuse3","orange3")
-
-df_sum <- df_class %>%
-  group_by(OA_label_TU, OA_label) %>%
-  deduplicate() %>%
-  summarise(n_papers = n())
-
-ggplot(df_sum,
-         aes(y = n_papers,
-             axis1 = OA_label_TU, axis2 = OA_label)) +
-    geom_alluvium(aes(fill = OA_label),
-                  width = 0, knot.pos = 0, reverse = FALSE) +
-    guides(fill = FALSE) +
-    geom_stratum(width = 1/8, reverse = FALSE) +
-    geom_text(stat = "stratum", infer.label = TRUE, reverse = FALSE) +
-    scale_x_continuous(breaks = 1:2, labels = c("TU", "OAmonitor")) +
-    scale_fill_manual(values = oacols) +
-    theme_bw() +
-    labs(title = "Differences between TU and OAmonitor",
-         y = "Number of papers")
-
-```
----
-# Reason for these differences
-
-- Custom data from Pure (repository and Taverne information) - this data can be added to a custom label!
-- Differences in unpaywall color between measuring dates
-- decision to label Unpaywall Gold as Gold instead of Hybrid
-- others?
-
----
 
 # Adding custom labels
 
@@ -461,35 +372,12 @@ df_class_custom %>%
 ```
 
 ---
-# Differences with custom data
+# Make alluvial
 
-```{r, echo=F, error=F, warning=F}
-oacols <- c("gray88","gold1","chartreuse3","orange3")
 
-df_sum_custom <- df_class_custom %>%
-  group_by(OA_label_TU, OA_label) %>%
-  deduplicate() %>%
-  summarise(n_papers = n())
-
-ggplot(df_sum_custom,
-         aes(y = n_papers,
-             axis1 = OA_label_TU, axis2 = OA_label)) +
-    geom_alluvium(aes(fill = OA_label),
-                  width = 0, knot.pos = 0, reverse = FALSE) +
-    guides(fill = FALSE) +
-    geom_stratum(width = 1/8, reverse = FALSE) +
-    geom_text(stat = "stratum", infer.label = TRUE, reverse = FALSE) +
-    scale_x_continuous(breaks = 1:2, labels = c("TU", "OAmonitor")) +
-    scale_fill_manual(values = oacols) +
-    theme_bw() +
-    labs(title = "Differences between TU and OAmonitor",
-         y = "Number of papers")
-
-```
+--- 
+# Screen for faculties with too little data
 
 
 ---
-# Further development
-- Better tutorial
-- Finish the packaging & increase robustness
-- Improve pipeline, data, and move towards national use!
+
