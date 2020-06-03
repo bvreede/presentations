@@ -105,25 +105,19 @@ _NB: no need to create a git repository or open in a new session._
 ... but you don't want to lose the code. So we will put it in the script.
 
 
-1. Make sure `devtools` is installed:
-```r
-install.packages("devtools")
-```
-
 1. Install the OA monitor from [its github repository](https://github.com/bvreede/OAmonitor):
 ```r
-devtools::install_github("https://github.com/bvreede/OAmonitor")
+remotes::install_github("https://github.com/bvreede/OAmonitor")
 ```
 
 1. enter '3' not to update any packages
 
 --
 
-#### When you are done, place a # in front of these lines of code:
+#### When you are done, place a # in front of this line of code:
 
 ```r
-# install.packages("devtools")
-# devtools::install_github("https://github.com/bvreede/OAmonitor")
+# remotes::install_github("https://github.com/bvreede/OAmonitor")
 ```
 
 
@@ -2099,6 +2093,7 @@ df_class %&gt;%
 ## 7 HYBRID   UPW (hybrid)          725
 ## 8 HYBRID   VSNU                 1789
 ```
+
 ---
 # How it works
 
@@ -2107,42 +2102,202 @@ Uses information in a hierarchical way to arrive at a classification.
 ![classify_oa](images/classify_oa.png)
 
 ---
+# Make a report
+! The summary chart made earlier is **not** accurate, as papers may appear more than once (e.g. if they are classified under multiple faculties)
+
+To perform deduplication, we need to make a report.
+
+
+```r
+report_to_dataframe(df_class)
+```
+
+```
+## # A tibble: 24 x 18
+## # Groups:   org_unit [24]
+##    org_unit CLOSED  GOLD GREEN HYBRID Total_papers gold_percent hybrid_percent
+##    &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;int&gt;        &lt;int&gt;        &lt;dbl&gt;          &lt;dbl&gt;
+##  1 Dep Aar…    104    54    31    107          296         18.2           36.1
+##  2 Dep Bes…     31     5     5     37           78          6.4           47.4
+##  3 Dep Bio…     67    65    15     57          204         31.9           27.9
+##  4 Dep Far…    159   106    12    153          430         24.7           35.6
+##  5 Dep Fys…     44    46    15     43          148         31.1           29.1
+##  6 Dep Geo…      2    NA    NA      1            3         NA             33.3
+##  7 Dep Inf…     32    17     9     28           86         19.8           32.6
+##  8 Dep Nat…     28    84    75     77          264         31.8           29.2
+##  9 Dep of …    103    55    29    126          313         17.6           40.3
+## 10 Dep Rec…     91    18     4     22          135         13.3           16.3
+## # … with 14 more rows, and 10 more variables: green_percent &lt;dbl&gt;,
+## #   total_OA_percent &lt;dbl&gt;, DOAJ &lt;int&gt;, NONE &lt;int&gt;, `UPW (bronze)` &lt;int&gt;, `UPW
+## #   (closed)` &lt;int&gt;, `UPW (gold)` &lt;int&gt;, `UPW (green)` &lt;int&gt;, `UPW
+## #   (hybrid)` &lt;int&gt;, VSNU &lt;int&gt;
+```
+
+---
 # Make some images
 
 
 ```r
-report_to_image(df_class)
+report_to_image(df_class, type="total")
 ```
 
+![](2020-06-03_OAmonitor-workshop_files/figure-html/total bar chart-1.png)&lt;!-- --&gt;
 ---
-# Custom report
+# Make some images
 
-![custom_report](images/custom_report.png)
+
 ```r
-individual_reports(df_class, "data/custom_reports.xlsx")
+report_to_image(df_class, type="prop")
+```
+
+&lt;!-- I have no idea why, but this function does not yield a result with "prop". This is what it should look like. --&gt;
+![](figures/plot_all_prop_2020-06-03.png)
+---
+# Make some images
+
+
+```r
+StatStratum &lt;- ggalluvial::StatStratum # without this line you will get an error
+report_to_alluvial(df_class)
+```
+
+![](2020-06-03_OAmonitor-workshop_files/figure-html/alluvial-1.png)&lt;!-- --&gt;
+
+---
+# Make a full report
+
+A full report includes:
+- a summarizing table, reporting on percentages per organization unit
+- a bar chart with total numbers
+- a bar chart with proportional numbers
+- an alluvial diagram for all papers (not deduplicated!)
+
+All these are saved in `output/` or `figures/`.
+
+Generate a full report like this:
+
+```r
+full_report(df_class)
 ```
 
 ---
 # Custom report
 
-Saved files include, per sub-report:
-- Bar plots (proportional and total)
-- Alluvial diagrams (total, showing OA strategy/classification)
-- Summarizing dataframe (as csv)
+[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/reports.xlsx)
+
+Make sub-groups of organization units that you want to include in a single report. For example:
+
+![custom_report_elaborate](images/custom_report_elaborate.png)
+
+Make all custom reports at once like this:
+
+
+```r
+individual_reports(df_class, path_report = "subreports.xlsx")
+```
+
+```
+## 
+## 
+## #### GENERATING REPORT FOR FACULTY OF SCIENCE ####
+```
+
+```
+## Saving 6.67 x 6.67 in image
+## Saving 6.67 x 6.67 in image
+## Saving 6.67 x 6.67 in image
+```
+
+```
+## 
+## 
+## #### GENERATING REPORT FOR ALL FACULTIES ####
+```
+
+```
+## Saving 6.67 x 6.67 in image
+## Saving 6.67 x 6.67 in image
+## Saving 6.67 x 6.67 in image
+```
+
+```
+## 
+## 
+## #### GENERATING REPORT FOR GEOSCIENCES ####
+```
+
+```
+## Saving 6.67 x 6.67 in image
+## Saving 6.67 x 6.67 in image
+## Saving 6.67 x 6.67 in image
+```
+
+Check the results in the folders `output/` and `figures/`
+
+---
+# Custom report
+
+This is what it should look like:
 
 .pull-left[
-![faculty_science](images/faculty_science.png)
+![faculty_science](figures/plot_All_faculties_prop_2020-06-03.png)
 ]
 .pull-right[
-![faculty_science](images/alluvial_science.png)
+![faculty_science](figures/alluvial_All_faculties_2020-06-03.png)
 ]
----
 
+Question: is the alluvial diagram here informative? Why? Why not?
+
+---
+# Reporting on HOOP 
+
+A different kind of sub-report: aggregating organization units, and reporting on the headers.
+
+Deduplication is done per aggregate. This can be used e.g. for HOOP-areas.
+
+[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/HOOP_areas.xlsx)
+
+![](images/hoop_input.png)
+
+
+```r
+hoop_report(df_class, path_hoop = "HOOP_areas.xlsx")
+```
+
+```
+## 
+## 
+## #### GENERATING REPORT FOR HOOP ####
+```
+
+```
+## quartz_off_screen 
+##                 2
+```
+
+Output is once again saved in `output/` and `figures/`.
+
+---
+# Sufficient information?
+
+
+```r
+df_class %&gt;%
+  filter(org_unit == "Faculteit REBO") %&gt;%
+  report_to_alluvial(title = "REBO")
+```
+
+![](2020-06-03_OAmonitor-workshop_files/figure-html/alluvial REBO-1.png)&lt;!-- --&gt;
+
+"NONE" means that either:
+- There was no DOI associated to 
+
+---
 # Adding custom labels
 
-Using two columns in the Delft data:
-- Taverne
-- Presence of publication in repository
+Sometimes, 
+
+[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/data/custom_labels.xlsx)
 
 We make an excel with labels, listing the unique IDs of papers:
 
@@ -2184,12 +2339,9 @@ df_class_custom %&gt;%
 ## 8 HYBRID   VSNU                 1789
 ```
 
----
-# Make alluvial
-
 
 --- 
-# Screen for faculties with too little data
+# What organization units have insufficient information?
 
 
 ---
