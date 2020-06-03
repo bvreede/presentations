@@ -3,7 +3,7 @@ reference/
 presentations/data
 
 # file hidden [should prob be removed from there]
-presentations/config_pub_files.xlsx
+presentations/*.xlsx
 
 # R additional
 .Rproj.user
