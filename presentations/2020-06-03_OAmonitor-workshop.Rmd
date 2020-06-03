@@ -267,18 +267,14 @@ vsnudf <- get_vsnu("data/VSNU-cummulatief_WOA20200302.xlsx")
 ---
 # Load existing data: DOAJ and Unpaywall
 
-1. You probably already have this data loaded, unless you restarted your Rstudio since yesterday.
-
-1. Check your environment (top right window) for the presence of `doajdf` and `upwdf` (or whatever names you gave them yesterday).
-
-1. **Only if you do not have these objects**, you can load them from the saved files:
+Load them from the saved files:
 
 ```{r load classification data, message=F, warning=F, error=F}
 doajdf <- get_doaj(df, source="data/doaj_from_issn_2020-03-09.csv")
 upwdf <- get_upw(df, source="data/upw_from_doi_2020-03-09.csv")
 ```
 
-NB: make sure to use the right path to where these files were saved in your system! Probably this is `data/clean/`. Obviously, make sure you use the right file names, too.
+NB: make sure to use the right path to where these files were saved in your system! For you, this is likely `data/clean/`. Obviously, make sure you use the right file names, too.
 
 ---
 # Make the classification
@@ -288,10 +284,11 @@ df_class <- classify_oa(df,
                         doajdf=doajdf,
                         vsnudf=vsnudf,
                         upwdf=upwdf,
-                        max_year=2019)
+                        save_results = FALSE)
 ```
+NB: by setting `save_results` to `TRUE`, you can save the dataframe with classifications.
 
-Check the classification in your data:
+Quickly check the classification in your data with `dplyr` code (not part of `OAmonitor`):
 ```{r first results}
 df_class %>% 
   group_by(OA_label,OA_label_explainer) %>% 
@@ -328,8 +325,12 @@ report_to_image(df_class, type="total")
 report_to_image(df_class, type="prop")
 ```
 
-<!-- I have no idea why, but this function does not yield a result with "prop". This is what it should look like. -->
-![](figures/plot_all_prop_2020-06-03.png)
+#### This is a bug!
+
+You should see a picture here, but it does not show up. This is what it should look like:
+
+![propplot](images/plot_all_prop_UU.png)
+
 ---
 # Make some images
 
@@ -347,9 +348,9 @@ A full report includes:
 - a bar chart with proportional numbers
 - an alluvial diagram for all papers (not deduplicated!)
 
-All these are saved in `output/` or `figures/`.
+All these are saved objects. You can find them in `output/` or `figures/`.
 
-Generate a full report like this:
+#### Generate a full report like this:
 
 ```r
 full_report(df_class)
@@ -358,30 +359,40 @@ full_report(df_class)
 ---
 # Custom report
 
-[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/reports.xlsx)
+To report on customized combinations of groups within your organization (e.g. all departments in a faculty, or all faculties). 
 
-Make sub-groups of organization units that you want to include in a single report. For example:
+1. [Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/reports.xlsx)
 
-![custom_report_elaborate](images/custom_report_elaborate.png)
+1. Fill out the template with sub-groups of organization units (spelled *exactly* like in `org_unit`!) that you want to include in a single report. For example:
 
-Make all custom reports at once like this:
+    ![custom_report_elaborate](images/custom_report_elaborate.png)
+
+1. Give each list of sub-groups an appropriate title.
+
+1. Save the filled out template in the project folder.
+
+
+---
+# Custom report
+
+Run the code below to make all custom reports in one go.
+
+NB: Make sure to specify `path_reports` to the location of your filled out custom template. Check the results in the folders `output/` and `figures/`
 
 ```{r subreport}
 individual_reports(df_class, path_report = "subreports.xlsx")
 ```
 
-Check the results in the folders `output/` and `figures/`
-
 ---
 # Custom report
 
-This is what it should look like:
+Some of the results that you will see (in this case for all faculties):
 
 .pull-left[
-![faculty_science](figures/plot_All_faculties_prop_2020-06-03.png)
+![faculty_science](images/plot_All_faculties_prop_2020-06-03.png)
 ]
 .pull-right[
-![faculty_science](figures/alluvial_All_faculties_2020-06-03.png)
+![faculty_science](images/alluvial_All_faculties_2020-06-03.png)
 ]
 
 Question: is the alluvial diagram here informative? Why? Why not?
@@ -389,67 +400,173 @@ Question: is the alluvial diagram here informative? Why? Why not?
 ---
 # Reporting on HOOP 
 
-A different kind of sub-report: aggregating organization units, and reporting on the headers.
+A different kind of sub-report: aggregating organization units, and reporting on the headers. Here deduplication is done per aggregate. This can be used e.g. for HOOP-areas.
 
-Deduplication is done per aggregate. This can be used e.g. for HOOP-areas.
+1. [Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/HOOP_areas.xlsx)
 
-[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/HOOP_areas.xlsx)
+1. Add some of your organization units to the chart (just a few will do for now).
 
-![](images/hoop_input.png)
+    ![](images/hoop_input.png)
 
-```{r report HOOP, warning=F, error=F, message=F}
-hoop_report(df_class, path_hoop = "HOOP_areas.xlsx")
-```
-
+1. Run as follows:
+    ```r
+    hoop_report(df_class, path_hoop = "HOOP_areas.xlsx")
+    ```
+    
 Output is once again saved in `output/` and `figures/`.
 
 ---
-# Sufficient information?
+# Do we have sufficient information?
 
-```{r alluvial REBO}
+For some faculties or departments, getting information based on ISSNs and DOIs will not be sufficient. For example, at the faculty of Law, Economics and Governance:
+
+.pull-left[
+```{r alluvial REBO, fig.height = 6}
 df_class %>%
   filter(org_unit == "Faculteit REBO") %>%
   report_to_alluvial(title = "REBO")
 ```
+]
 
-"NONE" means that either:
-- There was no DOI associated to 
+.pull-right[
+*"NONE" means that either:*
+- *There was no DOI associated to the publication*
+
+- *Unpaywall did not return information for the DOI.*
+]
+
+---
+# Screen for information level
+
+`cutoff` is the maximum level of "NONE" allowed.
+
+If `save = TRUE`, the resulting data will be saved to `data/clean/`.
+
+```{r check info}
+check_info(df_class, cutoff = 0.05, save=F)
+```
+
+---
+# Screen for information level
+
+```{r check info summary}
+check_info(df_class) %>%
+  group_by(org_unit) %>%
+  summarise(n_papers = n())
+```
+
+More efficient than if we simply look at every paper that has "NONE":
+```{r check all NONE, echo=F}
+df_class %>%
+  group_by(OA_label_explainer) %>%
+  summarise(n_papers = n())
+```
 
 ---
 # Adding custom labels
 
-Sometimes, 
+After a manual screening, papers can be found to be accessible after all. Or, papers that are known to be in the repository, are not picked up by Unpaywall.
 
-[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/data/custom_labels.xlsx)
+While too much customization will affect how comparable our results will be, it can be necessary to include these for internal reports.
 
-We make an excel with labels, listing the unique IDs of papers:
+Add custom labels through an excel document, listing the unique internal ID of papers:
 
-![custom_labels](images/custom_labels.png)
+![custom_labels](images/custom_labels2.png)
+
+You can make this yourself, but 
+[you can find the template here.](https://github.com/bvreede/OAmonitoring/blob/master/data/custom_labels.xlsx)
+
 ---
-
-# Re-classifying the data
+# Apply custom labels
 
 When applying the classification function, we now include the custom data:
 
-```{r}
-df_class_custom <- classify_oa(df,
-                        doajdf=doajdf,
-                        vsnudf=vsnudf,
-                        upwdf=upwdf,
-                        max_year=2019,
-                        custom=T,
-                        custom_path="data/custom_labels.xlsx")
+```{r custom classification}
+df_class_custom <- classify_oa(df, doajdf=doajdf, vsnudf=vsnudf, upwdf=upwdf,
+                               custom=T, custom_path="custom_labels.xlsx")
+```
 
+Custom labels are only applied *after* all Gold and Hybrid classifications are given. Custom labels will only classify as Green.
 
+.pull-left[
+#### Without custom labels
+```{r classification results, echo=F}
+df_class %>% 
+  group_by(OA_label,OA_label_explainer) %>% 
+  summarise(papers = n())
+```
+]
+
+.pull-right[
+#### With custom labels
+```{r custom results, echo=F}
 df_class_custom %>% 
   group_by(OA_label,OA_label_explainer) %>% 
   summarise(papers = n())
 ```
+]
 
+---
+# Consequence of custom
+
+.pull-left[
+
+```{r rebo before custom}
+df_class %>% 
+  filter(org_unit=="Faculteit REBO") %>% 
+  report_to_alluvial(title = "REBO")
+```
+]
+
+.pull-right[
+
+```{r rebo after custom}
+df_class_custom %>% 
+  filter(org_unit=="Faculteit REBO") %>% 
+  report_to_alluvial(title = "REBO")
+```
+
+]
+---
+# .
 
 --- 
-# What organization units have insufficient information?
+# Unpaywall vs OAmonitor
+
+```{r upw vs oam, echo = F, error=F, warning=F}
+library(ggalluvial)
+
+oacols <- c("gray88","gold1","chartreuse3","orange3")
+
+df_sum <- df_class %>%
+  group_by(upw, OA_label) %>%
+  deduplicate() %>%
+  summarise(n_papers = n())
+
+ggplot(df_sum,
+         aes(y = n_papers,
+             axis1 = upw, axis2 = OA_label)) +
+    geom_alluvium(aes(fill = OA_label),
+                  width = 0, knot.pos = 0, reverse = FALSE) +
+    guides(fill = FALSE) +
+    geom_stratum(width = 1/8, reverse = FALSE) +
+    geom_text(stat = "stratum", infer.label = TRUE, reverse = FALSE) +
+    scale_x_continuous(breaks = 1:2, labels = c("Unpaywall", "OAmonitor")) +
+    scale_fill_manual(values = oacols) +
+    theme_bw() +
+    labs(title = "Differences between Unpaywall and OAmonitor",
+         y = "Number of papers")
+
+```
 
 
 ---
+class: inverse, middle, center
+# Thank you!
 
+---
+# Links
+
+[OA monitor: R package](https://github.com/bvreede/OAmonitor) (under development)
+
+[OA monitoring: our old workflow, with documentation](https://github.com/bvreede/OAmonitoring) (deprecated)

@@ -2045,11 +2045,7 @@ vsnudf &lt;- get_vsnu("data/VSNU-cummulatief_WOA20200302.xlsx")
 ---
 # Load existing data: DOAJ and Unpaywall
 
-1. You probably already have this data loaded, unless you restarted your Rstudio since yesterday.
-
-1. Check your environment (top right window) for the presence of `doajdf` and `upwdf` (or whatever names you gave them yesterday).
-
-1. **Only if you do not have these objects**, you can load them from the saved files:
+Load them from the saved files:
 
 
 ```r
@@ -2057,7 +2053,7 @@ doajdf &lt;- get_doaj(df, source="data/doaj_from_issn_2020-03-09.csv")
 upwdf &lt;- get_upw(df, source="data/upw_from_doi_2020-03-09.csv")
 ```
 
-NB: make sure to use the right path to where these files were saved in your system! Probably this is `data/clean/`. Obviously, make sure you use the right file names, too.
+NB: make sure to use the right path to where these files were saved in your system! For you, this is likely `data/clean/`. Obviously, make sure you use the right file names, too.
 
 ---
 # Make the classification
@@ -2068,10 +2064,11 @@ df_class &lt;- classify_oa(df,
                         doajdf=doajdf,
                         vsnudf=vsnudf,
                         upwdf=upwdf,
-                        max_year=2019)
+                        save_results = FALSE)
 ```
+NB: by setting `save_results` to `TRUE`, you can save the dataframe with classifications.
 
-Check the classification in your data:
+Quickly check the classification in your data with `dplyr` code (not part of `OAmonitor`):
 
 ```r
 df_class %&gt;% 
@@ -2150,8 +2147,12 @@ report_to_image(df_class, type="total")
 report_to_image(df_class, type="prop")
 ```
 
-&lt;!-- I have no idea why, but this function does not yield a result with "prop". This is what it should look like. --&gt;
-![](figures/plot_all_prop_2020-06-03.png)
+#### This is a bug!
+
+You should see a picture here, but it does not show up. This is what it should look like:
+
+![propplot](images/plot_all_prop_UU.png)
+
 ---
 # Make some images
 
@@ -2172,9 +2173,9 @@ A full report includes:
 - a bar chart with proportional numbers
 - an alluvial diagram for all papers (not deduplicated!)
 
-All these are saved in `output/` or `figures/`.
+All these are saved objects. You can find them in `output/` or `figures/`.
 
-Generate a full report like this:
+#### Generate a full report like this:
 
 ```r
 full_report(df_class)
@@ -2183,13 +2184,25 @@ full_report(df_class)
 ---
 # Custom report
 
-[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/reports.xlsx)
+To report on customized combinations of groups within your organization (e.g. all departments in a faculty, or all faculties). 
 
-Make sub-groups of organization units that you want to include in a single report. For example:
+1. [Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/reports.xlsx)
 
-![custom_report_elaborate](images/custom_report_elaborate.png)
+1. Fill out the template with sub-groups of organization units (spelled *exactly* like in `org_unit`!) that you want to include in a single report. For example:
 
-Make all custom reports at once like this:
+    ![custom_report_elaborate](images/custom_report_elaborate.png)
+
+1. Give each list of sub-groups an appropriate title.
+
+1. Save the filled out template in the project folder.
+
+
+---
+# Custom report
+
+Run the code below to make all custom reports in one go.
+
+NB: Make sure to specify `path_reports` to the location of your filled out custom template. Check the results in the folders `output/` and `figures/`
 
 
 ```r
@@ -2232,18 +2245,16 @@ individual_reports(df_class, path_report = "subreports.xlsx")
 ## Saving 6.67 x 6.67 in image
 ```
 
-Check the results in the folders `output/` and `figures/`
-
 ---
 # Custom report
 
-This is what it should look like:
+Some of the results that you will see (in this case for all faculties):
 
 .pull-left[
-![faculty_science](figures/plot_All_faculties_prop_2020-06-03.png)
+![faculty_science](images/plot_All_faculties_prop_2020-06-03.png)
 ]
 .pull-right[
-![faculty_science](figures/alluvial_All_faculties_2020-06-03.png)
+![faculty_science](images/alluvial_All_faculties_2020-06-03.png)
 ]
 
 Question: is the alluvial diagram here informative? Why? Why not?
@@ -2251,35 +2262,27 @@ Question: is the alluvial diagram here informative? Why? Why not?
 ---
 # Reporting on HOOP 
 
-A different kind of sub-report: aggregating organization units, and reporting on the headers.
+A different kind of sub-report: aggregating organization units, and reporting on the headers. Here deduplication is done per aggregate. This can be used e.g. for HOOP-areas.
 
-Deduplication is done per aggregate. This can be used e.g. for HOOP-areas.
+1. [Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/HOOP_areas.xlsx)
 
-[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/config/HOOP_areas.xlsx)
+1. Add some of your organization units to the chart (just a few will do for now).
 
-![](images/hoop_input.png)
+    ![](images/hoop_input.png)
 
-
-```r
-hoop_report(df_class, path_hoop = "HOOP_areas.xlsx")
-```
-
-```
-## 
-## 
-## #### GENERATING REPORT FOR HOOP ####
-```
-
-```
-## quartz_off_screen 
-##                 2
-```
-
+1. Run as follows:
+    ```r
+    hoop_report(df_class, path_hoop = "HOOP_areas.xlsx")
+    ```
+    
 Output is once again saved in `output/` and `figures/`.
 
 ---
-# Sufficient information?
+# Do we have sufficient information?
 
+For some faculties or departments, getting information based on ISSNs and DOIs will not be sufficient. For example, at the faculty of Law, Economics and Governance:
+
+.pull-left[
 
 ```r
 df_class %&gt;%
@@ -2288,41 +2291,126 @@ df_class %&gt;%
 ```
 
 ![](2020-06-03_OAmonitor-workshop_files/figure-html/alluvial REBO-1.png)&lt;!-- --&gt;
+]
 
-"NONE" means that either:
-- There was no DOI associated to 
+.pull-right[
+*"NONE" means that either:*
+- *There was no DOI associated to the publication*
+
+- *Unpaywall did not return information for the DOI.*
+]
+
+---
+# Screen for information level
+
+`cutoff` is the maximum level of "NONE" allowed.
+
+If `save = TRUE`, the resulting data will be saved to `data/clean/`.
+
+
+```r
+check_info(df_class, cutoff = 0.05, save=F)
+```
+
+```
+## # A tibble: 191 x 32
+## # Groups:   source [1]
+##    org_unit `Publication ca… `Type-2` `Peer-reviewed-… system_id `APA-5`
+##    &lt;chr&gt;    &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;            &lt;chr&gt;     &lt;chr&gt;  
+##  1 Dep USE  &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             64805453  &lt;NA&gt;   
+##  2 Dep USE  &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             71204712  &lt;NA&gt;   
+##  3 Dep USE  &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             64342584  &lt;NA&gt;   
+##  4 Dep USE  &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             68193768  &lt;NA&gt;   
+##  5 Dep USE  &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             68385656  &lt;NA&gt;   
+##  6 Faculte… &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             64916854  &lt;NA&gt;   
+##  7 Faculte… &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             64916901  &lt;NA&gt;   
+##  8 Faculte… &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             69697404  &lt;NA&gt;   
+##  9 Faculte… &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             68882018  &lt;NA&gt;   
+## 10 Faculte… &lt;NA&gt;             &lt;NA&gt;     &lt;NA&gt;             64623092  &lt;NA&gt;   
+## # … with 181 more rows, and 26 more variables: `Title of the contribution in
+## #   original language-6` &lt;chr&gt;, issn &lt;chr&gt;, `Journal &gt; Journal-8` &lt;chr&gt;,
+## #   doi &lt;chr&gt;, `Electronic version(s) of this work-10` &lt;chr&gt;, `Open Access
+## #   status-11` &lt;chr&gt;, `Electronic version(s) of this work &gt; Document
+## #   version-12` &lt;chr&gt;, `Electronic version(s) of this work &gt; File &gt; File
+## #   name-13` &lt;chr&gt;, `Transfer publication to repository-14` &lt;chr&gt;, eissn &lt;lgl&gt;,
+## #   source &lt;chr&gt;, `Title of the contribution in original language-2` &lt;chr&gt;,
+## #   `Contributors-3` &lt;chr&gt;, `Journal &gt; Journal-4` &lt;chr&gt;, `Open Access
+## #   status-7` &lt;chr&gt;, `Electronic version(s) of this work &gt; Document
+## #   version-8` &lt;chr&gt;, `Electronic version(s) of this work &gt; Public access to
+## #   file-9` &lt;chr&gt;, `Open Access embargo date-10` &lt;chr&gt;, `Journal &gt; Journal &gt;
+## #   RoMEO colour-11` &lt;chr&gt;, `Electronic version(s) of this work-12` &lt;chr&gt;,
+## #   `Keywords in 'Library Keywords'-14` &lt;chr&gt;, doaj &lt;lgl&gt;, vsnu &lt;lgl&gt;,
+## #   upw &lt;chr&gt;, OA_label &lt;chr&gt;, OA_label_explainer &lt;chr&gt;
+```
+
+---
+# Screen for information level
+
+
+```r
+check_info(df_class) %&gt;%
+  group_by(org_unit) %&gt;%
+  summarise(n_papers = n())
+```
+
+```
+## # A tibble: 7 x 2
+##   org_unit                        n_papers
+##   &lt;chr&gt;                              &lt;int&gt;
+## 1 Dep Informatica                        9
+## 2 Dep USE                                5
+## 3 Dep Wiskunde                           8
+## 4 Faculteit Geesteswetenschappen        69
+## 5 Faculteit REBO                        64
+## 6 Faculteit Sociale Wetenschappen       35
+## 7 Faculteitsbureau                       1
+```
+
+More efficient than if we simply look at every paper that has "NONE":
+
+```
+## # A tibble: 8 x 2
+##   OA_label_explainer n_papers
+##   &lt;chr&gt;                 &lt;int&gt;
+## 1 DOAJ                   1862
+## 2 NONE                    371
+## 3 UPW (bronze)            418
+## 4 UPW (closed)           2441
+## 5 UPW (gold)              337
+## 6 UPW (green)             804
+## 7 UPW (hybrid)            725
+## 8 VSNU                   1789
+```
 
 ---
 # Adding custom labels
 
-Sometimes, 
+After a manual screening, papers can be found to be accessible after all. Or, papers that are known to be in the repository, are not picked up by Unpaywall.
 
-[Download the template here.](https://github.com/bvreede/OAmonitoring/blob/master/data/custom_labels.xlsx)
+While too much customization will affect how comparable our results will be, it can be necessary to include these for internal reports.
 
-We make an excel with labels, listing the unique IDs of papers:
+Add custom labels through an excel document, listing the unique internal ID of papers:
 
-![custom_labels](images/custom_labels.png)
+![custom_labels](images/custom_labels2.png)
+
+You can make this yourself, but 
+[you can find the template here.](https://github.com/bvreede/OAmonitoring/blob/master/data/custom_labels.xlsx)
+
 ---
-
-# Re-classifying the data
+# Apply custom labels
 
 When applying the classification function, we now include the custom data:
 
 
 ```r
-df_class_custom &lt;- classify_oa(df,
-                        doajdf=doajdf,
-                        vsnudf=vsnudf,
-                        upwdf=upwdf,
-                        max_year=2019,
-                        custom=T,
-                        custom_path="data/custom_labels.xlsx")
-
-
-df_class_custom %&gt;% 
-  group_by(OA_label,OA_label_explainer) %&gt;% 
-  summarise(papers = n())
+df_class_custom &lt;- classify_oa(df, doajdf=doajdf, vsnudf=vsnudf, upwdf=upwdf,
+                               custom=T, custom_path="custom_labels.xlsx")
 ```
+
+Custom labels are only applied *after* all Gold and Hybrid classifications are given. Custom labels will only classify as Green.
+
+.pull-left[
+#### Without custom labels
 
 ```
 ## # A tibble: 8 x 3
@@ -2338,13 +2426,76 @@ df_class_custom %&gt;%
 ## 7 HYBRID   UPW (hybrid)          725
 ## 8 HYBRID   VSNU                 1789
 ```
+]
 
+.pull-right[
+#### With custom labels
+
+```
+## # A tibble: 11 x 3
+## # Groups:   OA_label [4]
+##    OA_label OA_label_explainer  papers
+##    &lt;chr&gt;    &lt;chr&gt;                &lt;int&gt;
+##  1 CLOSED   NONE                   245
+##  2 CLOSED   UPW (bronze)           418
+##  3 CLOSED   UPW (closed)          2392
+##  4 GOLD     DOAJ                  1862
+##  5 GREEN    CUSTOM (Manual)         19
+##  6 GREEN    CUSTOM (Repository)     99
+##  7 GREEN    CUSTOM (Taverne)       126
+##  8 GREEN    UPW (green)            735
+##  9 HYBRID   UPW (gold)             337
+## 10 HYBRID   UPW (hybrid)           725
+## 11 HYBRID   VSNU                  1789
+```
+]
+
+---
+# Consequence of custom
+
+.pull-left[
+
+
+```r
+df_class %&gt;% 
+  filter(org_unit=="Faculteit REBO") %&gt;% 
+  report_to_alluvial(title = "REBO")
+```
+
+![](2020-06-03_OAmonitor-workshop_files/figure-html/rebo before custom-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+
+```r
+df_class_custom %&gt;% 
+  filter(org_unit=="Faculteit REBO") %&gt;% 
+  report_to_alluvial(title = "REBO")
+```
+
+![](2020-06-03_OAmonitor-workshop_files/figure-html/rebo after custom-1.png)&lt;!-- --&gt;
+
+]
+---
+# .
 
 --- 
-# What organization units have insufficient information?
+# Unpaywall vs OAmonitor
+
+![](2020-06-03_OAmonitor-workshop_files/figure-html/upw vs oam-1.png)&lt;!-- --&gt;
 
 
 ---
+class: inverse, middle, center
+# Thank you!
+
+---
+# Links
+
+[OA monitor: R package](https://github.com/bvreede/OAmonitor) (under development)
+
+[OA monitoring: our old workflow, with documentation](https://github.com/bvreede/OAmonitoring) (deprecated)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
