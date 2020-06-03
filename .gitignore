@@ -1,6 +1,11 @@
 # local hidden folders
 reference/
 presentations/data
+presentations/figures
+presentations/output
+
+output/
+figures/
 
 # file hidden [should prob be removed from there]
 presentations/*.xlsx
