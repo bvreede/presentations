@@ -1,0 +1,761 @@
+---
+title: "Best Practices and Project Management"
+author: "Barbara Vreede, Utrecht University Library"
+output:
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts, 'custom.css']
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+
+---
+# Be Reproducible!
+.pull-left-medium[
+What is reproducibility?
+
+- **computationally reproducible** means: with same code + same data + same environment
+== same results
+
+- Not the same as **replication**, where _different_ methods and _different_ data lead to the same research findings
+
+Why make your work reproducible?
+
+- for other scientists building on your work.
+
+- for colleagues using your tools.
+
+- for yourself, in six months!
+]
+
+--
+
+.pull-right-medium[
+![futureself](https://imgs.xkcd.com/comics/future_self.png)
+]
+
+---
+# Making a start
+![example](images/screenshots/badexample.png)
+
+---
+# Is this enough?
+
+- Access to the code
+- Access to the data
+- (And let's assume we can replicate the enviroment)
+
+How confident do you feel?
+--
+
+> This code is a kludgly, ugly, inefficient mess. 
+(...)
+>  It is probably riddled with problems, mistakes, bugs, inefficiencies, vestigial code stubs, etc etc.
+(...)
+> I am as confident as I am capable of being that all of the factual claims that were made in the manuscript are accurate.
+
+--
+
+We need to do more: we need to inspire trust.
+- The code is correct (and I have made it easy for you/someone to check);
+- My workflow is robust;
+- My workflow *itself* is accessible, and I will be guiding you through it.
+
+---
+# Getting started
+
+.pull-left[
+- Contain your project in a single recognizable folder
+
+- Distinguish folder _types_, name them accordingly:
+  - **Read-only**: data, metadata
+  - **Human-generated**: code, paper, documentation
+  - **Project-generated**: clean data, figures, models...
+
+- Initialize a **README** file, document your project
+
+- Choose a **license**
+
+- Publish your project.]
+
+.pull-right[
+-![exampleproject](images/screenshots/exampleproject.png)
+[Wilson _et al._ (2017)](https://doi.org/10.1371/journal.pcbi.1005510)
+]
+
+---
+# A note on paths
+
+- Your project should be transportable between computers.
+
+- For this reason, you should use **relative paths** only: compare
+  - `/Users/barbara/Dropbox/proteindomains/data/zincfinger.json`
+  - `./data/zincfinger.json`
+
+- `./` means: in this folder
+
+- `../` means: one folder up
+
+---
+
+# Choosing a license
+
+- Copyright is implicit; others cannot use your code without your permission.
+
+- Licensing gives that permission, and its boundaries and conditions.
+
+- Choosing a license early on means being aware of your license as the project proceeds (and not creating conflicts).
+
+- There are over [80 OSI-approved licenses](https://opensource.org/licenses/alphabetical) (and [many](http://dbad-license.org), [many](http://www.wtfpl.net) others) to choose from.
+
+This is one I like to use:
+
+![license](images/screenshots/license.png)
+
+What is important to you? What does your lab use? [Choose your own license!](http://choosealicense.com)
+
+---
+
+---
+# Where do I publish?
+.pull-left-larger[
+### Living project: github
+(or other social coding platform):
+
+- synergistic with version control software git
+
+- makes history public and accessible _(eek!)_
+
+- allows publication of different releases
+
+- provides a platform for interaction and collaboration
+
+### Archiving a release: zenodo
+(or other stable repository, like the [OSF](https://vickysteeves.gitlab.io/2018-uutah-repro/the-open-science-framework.html))
+- [direct archiving supported](https://guides.github.com/activities/citable-code/) from github to zenodo
+
+- this gives you a **doi** (digital object identifier): your code is citeable!
+]
+.pull-right-smaller[
+![octocat-project](https://github.githubassets.com/images/modules/logos_page/Octocat.png)
+![zenodo](https://blog.zenodo.org/static/img/logos/zenodo-gradient-1000.png)
+]
+
+---
+
+# Why do you need version control?
+
+.pull-left[
+
+- It will help you manage ~~your code~~ most of your files (it is like track changes on steroids: it applies to all files in a folder).
+
+- It allows you to trace back your steps: if something breaks, you can figure out what happened.
+
+- NO MORE thesis_final_final_SERIOUSLYFINAL.Rmd
+
+#### even better:
+- a good version control system allows you to collaborate and share!
+
+- a good version control system facilitates experimentation!
+
+]
+
+.pull-right[
+![final](http://www.phdcomics.com/comics/archive/phd101212s.gif)
+]
+---
+.pull-left-larger[
+# What is git?
+- Distributed Version Control system written by Linus Torvalds (of Linux fame)
+
+- Allows you to log updates, branch your work (so you can experiment without losing the original!), and keep all backups, while efficiently using your storage
+
+- Gives user a lot of control on what to track, and adds a narrative to changes ('commit comments')
+
+- Current standard for code
+
+- Open Source software written for the command line...
+
+- ... but many GUI-clients exist nowadays, and most coding IDEs have built-in git.]
+.pull-right-smaller[
+![distributed](images/screenshots/distributed.png)
+
+![git](https://imgs.xkcd.com/comics/git.png)
+]
+
+---
+# Do you want to learn more?
+
+- A [Software Carpentry course on git](https://swcarpentry.github.io/git-novice/)
+
+- A [version control + git tutorial](https://www.atlassian.com/git/tutorials/what-is-version-control) on Atlassian
+
+- A [git cheatsheet](https://www.atlassian.com/git/tutorials/atlassian-git-cheatsheet) from Atlassian
+
+- A book with [all the ins and outs of git](https://www.git-scm.com/book/en/v2) from the git website
+
+![atlassian](images/atlassian/bubblediag.svg)
+
+---
+# Aspects of good quality code
+
+.pull-left[
+- Readable
+
+- Reusable
+
+- Robust
+]
+
+.footnote[
+Source: [xkcd](https://xkcd.com/1513/)
+]
+
+.pull-right[
+![goodcode](https://imgs.xkcd.com/comics/good_code.png)
+
+]
+
+---
+# Code readability
+
+- Code is for computer, comments are for humans.
+
+
+---
+# Code readability
+
+- ~~Code is for computer, comments are for humans.~~
+
+- Use whitespace and newlines strategically.
+
+--
+
+#### Compare:
+```r
+this <- function(arg1,arg2) res<-arg1*arg2;return(res)
+hurts <- mean(c(this(3,4),this(3,1),this(9,9))); print(hurts)
+```
+
+```r
+this <- function(arg1,arg2){
+  res <- arg1 * arg2
+  return(res)
+}
+
+hurts <- mean(
+  c(
+    this(3,4),
+    this(3,1),
+    this(9,9)
+    )
+  )
+print(hurts)
+```
+
+
+---
+# Code readability
+
+- ~~Code is for computer, comments are for humans.~~
+
+- Use whitespace and newlines strategically.
+
+- use descriptive names for functions and variables
+  - start functions with a verb
+  - make variable names _just_ long enough to be meaningful
+
+--
+
+#### Compare:
+
+```python
+for i in my_shopping_basket:
+  if(test(i)) > 10:
+    purch(i)
+  else:
+    disc(i)
+```
+
+```python
+for item in basket:
+  if(testNecessity(item)) > 10:
+    purchase(item)
+  else:
+    discard(item)
+```
+
+
+---
+# Code readability
+
+- ~~Code is for computer, comments are for humans.~~
+
+- Use whitespace and newlines strategically.
+
+- use descriptive names for functions and variables
+  - start functions with a verb
+  - make variable names _just_ long enough to be meaningful
+
+- use a consistent style
+  - consistency will make your code easier to understand and maintain
+  - consult a styleguide for your language (keep conventions, and don't reinvent the wheel)
+  
+--
+
+#### Compare:
+
+```r
+myVar<-original_variable+MOD(new.var)
+```
+```r
+my_var <- original_var + Modified(new_var)
+```
+---
+# Styleguides
+
+  - Python style manual: [Pep-8](https://www.python.org/dev/peps/pep-0008/)
+  - R style manual: [Tidyverse style guide](https://style.tidyverse.org)
+  
+![codequality](https://imgs.xkcd.com/comics/code_quality.png)
+.footnote[
+Source: [xkcd](https://xkcd.com/1513/)
+]
+
+---
+# Code reusability: some guidelines
+
+- Separate code and data: data is specific, code need not be
+
+  - consider using a config file for project-specific (meta)data
+  - but DO hard-code unchanging variables, e.g. `gravity = 9.80665`, **once**.
+--
+
+- Do One Thing (and do it well)
+
+  - One function for one purpose
+  - One class for one purpose
+  - One script for one purpose (no copy-pasting to recycle it!)
+--
+
+- Don't Repeat Yourself: use functions
+
+ - Write routines in functions, i.e., code you reuse often
+ - Identify potential functions by action: functions perform tasks (e.g. sorting, plotting, saving a file, transform data...)
+ 
+
+
+---
+# Code reusability through functions
+
+Functions are smaller code units reponsible of one task.
+
+- Functions are meant to be reused
+
+- Functions accept arguments (though they may also be empty!)
+
+- What arguments a function accept is defined by its parameters
+
+Functions do not necessarily make code shorter (at first)! Compare:
+```r
+indexATG = [n for n,i in enumerate(myList) if i == 'ATG']
+indexAAG = [n for n,i in enumerate(myList) if i == 'AAG']
+```
+
+```r
+def indexString(inputList,z):
+	zIndex = [n for n,i in enumerate(li) if i == z]
+	return zIndex
+	
+indexATG = indexString(myList,'ATG')
+indexAAG = indexString(myList,'AAG')
+```
+
+---
+
+# Think in building blocks!
+
+.pull-left[
+Small, cohesive units are much better than...
+
+![tetris](images/tetris.svg)]
+--
+.pull-right[
+... a customized behemoth!
+![tetris](images/tetris_help.svg)]
+
+---
+---
+# Code robustness
+
+![errormanagement](images/errormanagement_implicit.svg)
+---
+# Code robustness
+
+![errormanagement](images/errormanagement_explicit.svg)
+
+---
+# Code robustness
+
+![errormanagement](images/errormanagement.svg)
+
+---
+# Code robustness
+
+#### Protect the user with error management:
+
+- Make assumptions and expectations explicit.
+  - check values before processing them
+  - identify and manage exceptions
+- Produce errors when expectations are not met.
+- Consider error options, and perform error management:
+  - redirect the program
+  - log or report the error, to allow the user (or developer) to troubleshoot
+  - if necessary: abort the run
+  
+--
+
+#### Protect the developer with tests:
+- Use errors and error management to test expected behavior
+- Capture unexpected errors to identify options for error management
+
+
+---
+# Throwing an error
+```{python, error=TRUE}
+def read_vector_value(index=0, my_vector=[10,5,4,12,25]):
+    if index > len(my_vector) - 1:
+        raise IndexError('Index higher than vector length.')
+    return my_vector[index]
+
+read_vector_value(index=6)
+```
+--
+#### Why not simply adjust the function output?
+```{python, error=TRUE}
+def read_vector_value(index=0, my_vector=[10,5,4,12,25]):
+    if index > len(my_vector) - 1:
+        return None
+    return my_vector[index]
+
+print(read_vector_value(index=6))
+```
+--
+_Because it is unclear if `None` is expected behavior or indicative of a problem._
+---
+# Warning message without breaking
+#### An error breaks code execution
+```{R, error=TRUE}
+read_vector_value <- function(index=1,my_vector=c(10,5,4,12,25)){
+  if(index>length(my_vector)){
+    stop("Index higher than vector length.")}
+return(my_vector[index])
+}
+
+print(read_vector_value(index=6))
+```
+--
+#### Capture the error but release a warning
+```{R, error=TRUE}
+read_vector_value <- function(index=1,my_vector=c(10,5,4,12,25)){
+  if(index>length(my_vector)){
+    warning("Index higher than vector length.")
+    return(NA)}
+return(my_vector[index])
+}
+
+print(read_vector_value(index=6))
+```
+---
+# Redirecting with exceptions
+
+If you do not want to interrupt your script when an error is raised: use try/catch ('except' in Python). NB: Note that Python allows you to distinguish by error type!
+```{python, include=F}
+# ensure that the function is correctly in memory
+def read_vector_value(index=0, my_vector=[10,5,4,12,25]):
+    if index > len(my_vector) - 1:
+        raise IndexError('Index higher than vector length.')
+    return my_vector[index]
+```
+.pull-left[
+```{python, error=TRUE}
+try:
+  read_vector_value(6)
+except IndexError:
+  print("This is an exception")
+```
+]
+.pull-right[
+```{python, error=TRUE}
+try:
+  read_vector_value(6)
+except ArithmeticError:
+  print("This is an exception")
+```
+]
+---
+# Validating input
+
+Consider early statements in the script to validate (data) input.
+
+With if/else:
+```python
+if not protein_data:
+  raise ValueError("Dataset cannot be empty")
+```
+
+With try/catch:
+```r
+tryCatch({
+  do_something_that_might_go_wrong(protein_data)
+}, error = function(e){
+  log(e)
+}, finally = {
+  cleanup(protein_data)
+})
+```
+---
+# Expectations and assumptions
+
+#### Expect the worst
+- use of wrong input values for functions
+- malformed text input
+- wrong data types
+
+![nouser](https://4.bp.blogspot.com/_YzKCMr-tcMM/S9bN9dGqgBI/AAAAAAAAALo/cxqBx5AaoYk/s640/23GORILLA.jpg)
+.footnote[
+Source: [cartoontester](https://cartoontester.blogspot.com/2010/02/thats-not-bug.html)
+]
+---
+# Project documentation
+
+#### Why do you need documentation?
+
+- You want yourself to understand how code written some time ago works
+
+- You want others to understand how to (re-)use your code
+
+--
+
+#### For this you need to 
+- Explain parts of your code with __comments__
+
+- Explain what to install and how to get started in your __readme__
+
+- Explain in-depth use of your code in a __notebook__
+
+---
+# Comments
+#### Comments are annotations you write directly in the code source.
+.pull-left[
+They:
+
+- are written for users who deal with your source code
+
+- explain parts that are not intuitive from the code itself
+
+- **do not** replace readable or structured code
+
+- (in a specific structure) can be used to directly generate documentation for users.
+
+.footnote[Comic source: [Geek & Poke](https://geekandpoke.typepad.com/geekandpoke/2011/06/code-commenting-made-easy.html)]
+]
+
+.pull-right[
+![comments](https://geekandpoke.typepad.com/.a/6a00d8341d3df553ef015432bf9167970c-800wi)
+
+]
+---
+
+# When *not* to use comments
+
+- ...to repeat in natural language what is written in your code
+
+```r
+# Now we check if the age of a patient is greater than 18
+if(agePatient > 18)
+
+```
+--
+- ...to turn old code into zombie code (fine for troubleshooting, but do not leave it in!)
+
+```r
+# Do not run this!!
+# itDoesNotWork <- optimizeMulticoreDeepLearning(myProteins)
+# if(itDoesNotWork == 1444){
+#    connection <- connectToHPC(currentUser, password)
+#}
+```
+--
+- ...to replace version control, like git
+
+```r
+
+# removed on August 5
+# if() ...
+
+#Now, it connects to the API with o-auth2, updated 05/05/2016
+...
+```
+---
+
+# Comment lines: WHY over HOW
+
+Comment lines are used to explain the **purpose** of some piece of code.
+```python
+# Bug fix GH 20601
+# If the data frame is too big, the number of unique index combination
+# will cause int32 overflow on windows environments.
+# We want to check and raise an error before this happens
+num_rows = np.max([index_level.size for index_level in self.new_index_levels])
+num_columns = self.removed_level.
+```
+*From [Pandas reshape.py documentation](https://github.com/pandas-dev/pandas/blob/master/pandas/core/reshape/reshape.py)*
+---
+# Docstrings
+
+- Structured comments, associated to *segments* (rather than lines) of code, can be used to generate documentation for users*  of your project.
+
+- These comments are called *docstrings*.
+
+- Docstrings are parsed as the first statement of a module (e.g. a function or class).
+
+- Docstrings allow you to provide documentation to a function, that is relevant to the user of that function.
+
+- Writing docstrings makes you generate your documentation as you are generating the code: efficiently, comprehensively!
+
+
+.footnote[*) Remember? That's probably you!]
+---
+# Generating docstrings
+In R you will need a separate package to deal with docstrings:
+
+.pull-left[
+```r
+library(docstring)
+
+#' @title Multiply two numbers
+#' @description This function takes two 
+#' input numbers and multiplies
+#' them. It returns the multiplied result.
+#' @param x The first value
+#' @param y The second value
+#' @return The two arguments multiplied.
+multiply <- function(x,y){
+  return(x*y)
+}
+
+?multiply
+```
+]
+--
+.pull-right[![R example](images/screenshots/r_documentation.png)
+
+]
+
+*Much more information in the [vignette for docstring.](https://cran.r-project.org/web/packages/docstring/vignettes/docstring_intro.html)*
+
+---
+# Generating docstrings
+In Python, docstrings are string literal comments following a function declaration:
+
+```python
+def multiply(x,y):
+  """
+  Multiply two numbers
+  
+  This function takes two input numbers and multiplies them.
+  It returns the multiplied result.
+  Keyword arguments:
+  x -- the first value
+  y -- the second value
+  """
+  return x*y
+```
+NB: a triple single quote (`'''`) works, but PEP style prefers double quotes for docstrings.
+---
+
+# A glimpse into code generation
+
+Docstrings are formatted so that they can easily be turned into documentation of your package.
+
+You will need additional tools:
+
+  * http://www.doxygen.nl/ : C++ (and many more languages)
+  * http://www.sphinx-doc.org/ : Python
+  * https://roxygen2.r-lib.org/ : R
+
+We will not do this today, but it is worth checking out if you want to release your code!
+---
+# A glimpse into code generation
+
+In the console, in RStudio, run the following command:
+
+```R
+roxygen2::roxygenise()
+```
+
+.pull-left-larger[
+The command above will create documentation files that can be visualized by calling help(your package)
+]
+
+.pull-right-smaller[
+
+![output](images/screenshots/document_roxygen_r_help.PNG)
+
+]
+
+.footnote[
+__NB__ This works for R packages, with the proper file structure. See here: http://r-pkgs.had.co.nz/intro.html
+]
+
+---
+# README
+
+The README page is the first thing your user will see!
+
+The contents typically include one or more of the following:
+
+> - __Configuration instructions__
+- __Installation instructions__
+- __Operating instructions__
+- A file manifest (list of files included)
+- Copyright and licensing information
+- Contact information for the distributor or programmer
+- Known bugs
+- Troubleshooting
+- Credits and acknowledgments
+
+*From wikipedia's [Readme]("https://en.wikipedia.org/w/index.php?title=README&oldid=923233067") page*
+---
+# An example
+![mcfly](images/screenshots/mcfly.png)
+
+---
+# README examples and templates
+
+Some examples from projects with high quality documentation:
+
+Bigger community software projects:
+- Python's [Pandas](https://github.com/pandas-dev/pandas)
+- [Scikit-learn](https://github.com/scikit-learn/scikit-learn)
+- Tidyverse's [Dplyr](https://github.com/tidyverse/dplyr)
+
+Research software:
+- e-science center's ['McFly' tool](https://github.com/NLeSC/mcfly)
+- Utrecht University's: [Automatic Systematic Review](https://github.com/msdslab/automated-systematic-review)
+- Utrecht University's [MICE](https://github.com/stefvanbuuren/mice)
+
+
+Templates and ideas:
+
+- https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+- https://github.com/matiassingers/awesome-readme
+
+---
