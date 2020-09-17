@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Best Practices and Project Management</title>
+    <title>Writing reproducible code</title>
     <meta charset="utf-8" />
     <meta name="author" content="Barbara Vreede, Utrecht University Library" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
@@ -13,66 +13,48 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Best Practices and Project Management
+# Writing reproducible code
 ### Barbara Vreede, Utrecht University Library
 
 ---
 
 
+# Reproduction is vital
 
-# Be Reproducible!
-.pull-left-medium[
-What is reproducibility?
-
-- **computationally reproducible** means: with same code + same data + same environment
-== same results
-
-- Not the same as **replication**, where _different_ methods and _different_ data lead to the same research findings
-
-Why make your work reproducible?
-
-- for other scientists building on your work.
-
-- for colleagues using your tools.
-
-- for yourself, in six months!
+.pull-left[
+![reproduction_attempt](images/reproduction_attempt.png)
 ]
+--
+.pull-right[
+Reproduction is a vital contribution to science:
+- A reproducible project reduces research waste
+- Reproducing projects identifies the giants on whom to stand.
+
+]
+.footnote[Source: [1,500 scientists lift the lid on reproducibility](https://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970), Nature (2016)]
+
+---
+# The Four Facets of Reproducibility
+
+.pull-left-medium[
+#### Documentation
+What do you need to execute this project? Where do you start?
+
+#### Organization
+Demonstrate a trustworthy workflow.
+
+#### Automation
+Automated analyses trace your steps, and prevent human error (or at the very least: document it).
+
+#### Dissemination
+Share your data, release your code, publish your findings.]
 
 --
-
 .pull-right-medium[
 ![futureself](https://imgs.xkcd.com/comics/future_self.png)
 ]
-
 ---
-# Making a start
-![example](images/badexample.png)
-
----
-# Is this enough?
-
-- Access to the code
-- Access to the data
-- (And let's assume we can replicate the enviroment)
-
-How confident do you feel?
---
-
-&gt; This code is a kludgly, ugly, inefficient mess. 
-(...)
-&gt;  It is probably riddled with problems, mistakes, bugs, inefficiencies, vestigial code stubs, etc etc.
-(...)
-&gt; I am as confident as I am capable of being that all of the factual claims that were made in the manuscript are accurate.
-
---
-
-We need to do more: we need to inspire trust.
-- The code is correct (and I have made it easy for you/someone to check);
-- My workflow is robust;
-- My workflow *itself* is accessible, and I will be guiding you through it.
-
----
-# Getting started
+# Getting started: project management
 
 .pull-left[
 - Contain your project in a single recognizable folder
@@ -84,125 +66,34 @@ We need to do more: we need to inspire trust.
 
 - Initialize a **README** file, document your project
 
-- Choose a **license**
-
-- Publish your project.]
+- Choose a **license** (more on that later)
+]
 
 .pull-right[
--![exampleproject](images/exampleproject.png)
+![exampleproject](images/exampleproject.png)
 [Wilson _et al._ (2017)](https://doi.org/10.1371/journal.pcbi.1005510)
 ]
 
 ---
 # A note on paths
 
-- Your project should be transportable between computers.
+- A project, contained in a single folder, should be transportable between computers.
 
 - For this reason, you should use **relative paths** only: compare
   - `/Users/barbara/Dropbox/proteindomains/data/zincfinger.json`
   - `./data/zincfinger.json`
 
-- `./` means: in this folder
+- `./` means: in this folder; `../` means: one folder up
 
-- `../` means: one folder up
-
----
-
-# Choosing a license
-
-- Copyright is implicit; others cannot use your code without your permission.
-
-- Licensing gives that permission, and its boundaries and conditions.
-
-- Choosing a license early on means being aware of your license as the project proceeds (and not creating conflicts).
-
-- There are over [80 OSI-approved licenses](https://opensource.org/licenses/alphabetical) (and [many](http://dbad-license.org), [many](http://www.wtfpl.net) others) to choose from.
-
-This is one I like to use:
-
-![license](images/license.png)
-
-What is important to you? What does your lab use? [Choose your own license!](http://choosealicense.com)
-
----
-# Living vs archived project
-.pull-left-larger[
-### Living project: github/gitlab
-(or other social coding platform):
-
-- synergistic with version control software git
-
-- makes history public and accessible _(eek!)_
-
-- allows publication of different releases
-
-- provides a platform for interaction and collaboration
-
-### Archiving a release: zenodo
-(or other stable repository, like the [OSF](https://vickysteeves.gitlab.io/2018-uutah-repro/the-open-science-framework.html))
-- [direct archiving supported](https://guides.github.com/activities/citable-code/) from github to zenodo
-
-- this gives you a **doi** (digital object identifier): your code is citeable!
-]
-.pull-right-smaller[
-![octocat-project](https://github.githubassets.com/images/modules/logos_page/Octocat.png)
-![zenodo](https://blog.zenodo.org/static/img/logos/zenodo-gradient-1000.png)
-]
-
----
-
-# Why do you need version control?
-
-.pull-left[
-
-- It will help you manage ~~your code~~ most of your files (it is like track changes on steroids: it applies to all files in a folder).
-
-- It allows you to trace back your steps: if something breaks, you can figure out what happened.
-
-- NO MORE thesis_final_final_SERIOUSLYFINAL.Rmd
-
-#### even better:
-- a good version control system allows you to collaborate and share!
-
-- a good version control system facilitates experimentation!
-
-]
-
-.pull-right[
-![final](http://www.phdcomics.com/comics/archive/phd101212s.gif)
-]
----
-.pull-left-larger[
-# What is git?
-- Distributed Version Control system written by Linus Torvalds (of Linux fame)
-
-- Allows you to log updates, branch your work (so you can experiment without losing the original!), and keep all backups, while efficiently using your storage
-
-- Gives user a lot of control on what to track, and adds a narrative to changes ('commit comments')
-
-- Current standard for code
-
-- Open Source software written for the command line...
-
-- ... but many GUI-clients exist nowadays, and most coding IDEs have built-in git.]
-.pull-right-smaller[
-![distributed](images/distributed.png)
-
-![git](https://imgs.xkcd.com/comics/git.png)
-]
-
----
-# Do you want to learn more?
-
-- A [Software Carpentry course on git](https://swcarpentry.github.io/git-novice/)
-
-- A [version control + git tutorial](https://www.atlassian.com/git/tutorials/what-is-version-control) on Atlassian
-
-- A [git cheatsheet](https://www.atlassian.com/git/tutorials/atlassian-git-cheatsheet) from Atlassian
-
-- A book with [all the ins and outs of git](https://www.git-scm.com/book/en/v2) from the git website
-
-![atlassian](images/bubblediag.svg)
+- In case you cannot use relative paths, make sure your **absolute** folder location is retrieved once:
+  - in a config file, with clear instructions to edit
+  - OR pulled automatically from the system when the project is launched:
+  
+e.g.:
+```python
+import os
+os.getcwd()
+```
 
 ---
 # Aspects of good quality code
@@ -235,40 +126,6 @@ Source: [xkcd](https://xkcd.com/1513/)
 
 - ~~Code is for computer, comments are for humans.~~
 
-- Use whitespace and newlines strategically.
-
---
-
-#### Compare:
-```r
-this &lt;- function(arg1,arg2) res&lt;-arg1*arg2;return(res)
-hurts &lt;- mean(c(this(3,4),this(3,1),this(9,9))); print(hurts)
-```
-
-```r
-this &lt;- function(arg1,arg2){
-  res &lt;- arg1 * arg2
-  return(res)
-}
-
-hurts &lt;- mean(
-  c(
-    this(3,4),
-    this(3,1),
-    this(9,9)
-    )
-  )
-print(hurts)
-```
-
-
----
-# Code readability
-
-- ~~Code is for computer, comments are for humans.~~
-
-- Use whitespace and newlines strategically.
-
 - use descriptive names for functions and variables
   - start functions with a verb
   - make variable names _just_ long enough to be meaningful
@@ -299,31 +156,28 @@ for item in basket:
 
 - ~~Code is for computer, comments are for humans.~~
 
-- Use whitespace and newlines strategically.
-
 - use descriptive names for functions and variables
   - start functions with a verb
   - make variable names _just_ long enough to be meaningful
 
 - use a consistent style
   - consistency will make your code easier to understand and maintain
-  - consult a styleguide for your language (keep conventions, and don't reinvent the wheel)
+  - consult a style guide for your language (keep conventions, and don't reinvent the wheel)
   
 --
 
 #### Compare:
 
 ```r
-myVar&lt;-original_variable+MOD(new.var)
+myVar=original_variable+MOD(new.var)
 ```
 ```r
-my_var &lt;- original_var + Modified(new_var)
+my_var = original_var + Modified(new_var)
 ```
 ---
-# Styleguides
+# Styleguide
 
-  - Python style manual: [Pep-8](https://www.python.org/dev/peps/pep-0008/)
-  - R style manual: [Tidyverse style guide](https://style.tidyverse.org)
+Python style manual: [Pep-8](https://www.python.org/dev/peps/pep-0008/)
   
 ![codequality](https://imgs.xkcd.com/comics/code_quality.png)
 .footnote[
@@ -350,8 +204,6 @@ Source: [xkcd](https://xkcd.com/1513/)
 
  - Write routines in functions, i.e., code you reuse often
  - Identify potential functions by action: functions perform tasks (e.g. sorting, plotting, saving a file, transform data...)
- 
-
 
 ---
 # Code reusability through functions
@@ -365,12 +217,12 @@ Functions are smaller code units reponsible of one task.
 - What arguments a function accept is defined by its parameters
 
 Functions do not necessarily make code shorter (at first)! Compare:
-```r
+```python
 indexATG = [n for n,i in enumerate(myList) if i == 'ATG']
 indexAAG = [n for n,i in enumerate(myList) if i == 'AAG']
 ```
 
-```r
+```python
 def indexString(inputList,z):
 	zIndex = [n for n,i in enumerate(li) if i == z]
 	return zIndex
@@ -424,7 +276,7 @@ Small, cohesive units are much better than...
 
 #### Protect the developer with tests:
 - Use errors and error management to test expected behavior
-- Capture unexpected errors to identify options for error management
+- Capture unexpected errors to identify further options for error management
 
 
 ---
@@ -463,47 +315,9 @@ print(read_vector_value(index=6))
 --
 _Because it is unclear if `None` is expected behavior or indicative of a problem._
 ---
-# Warning message without breaking
-#### An error breaks code execution
-
-```r
-read_vector_value &lt;- function(index=1,my_vector=c(10,5,4,12,25)){
-  if(index&gt;length(my_vector)){
-    stop("Index higher than vector length.")}
-return(my_vector[index])
-}
-
-print(read_vector_value(index=6))
-```
-
-```
-## Error in read_vector_value(index = 6): Index higher than vector length.
-```
---
-#### Capture the error but release a warning
-
-```r
-read_vector_value &lt;- function(index=1,my_vector=c(10,5,4,12,25)){
-  if(index&gt;length(my_vector)){
-    warning("Index higher than vector length.")
-    return(NA)}
-return(my_vector[index])
-}
-
-print(read_vector_value(index=6))
-```
-
-```
-## Warning in read_vector_value(index = 6): Index higher than vector length.
-```
-
-```
-## [1] NA
-```
----
 # Redirecting with exceptions
 
-If you do not want to interrupt your script when an error is raised: use try/catch ('except' in Python). NB: Note that Python allows you to distinguish by error type!
+If you do not want to interrupt your script when an error is raised: use try/except. NB: Note that Python allows you to distinguish by error type!
 
 .pull-left[
 
@@ -564,12 +378,12 @@ Source: [cartoontester](https://cartoontester.blogspot.com/2010/02/thats-not-bug
 
 - You want yourself to understand how code written some time ago works
 
-- You want others to understand how to (re-)use your code
+- You want others to understand how to (re-)use your code, and/or reproduce your project
 
 --
 
 #### For this you need to 
-- Explain parts of your code with __comments__
+- Explain (parts of) your code with __comments__
 
 - Explain what to install and how to get started in your __readme__
 
@@ -612,20 +426,18 @@ if agePatient &gt; 18:
 
 ```python
 # Do not run this!!
-# itDoesNotWork = optimizeMulticoreDeepLearning(myProteins)
-# if itDoesNotWork == 1444:
+# connectionType = optimizeMulticoreDeepLearning(myProteins)
+# if connectionType == 1444:
 #    connection = connectToHPC(currentUser, password)
 ```
 --
 - ...to replace version control, like git
 
-```r
-
+```python
 # removed on August 5
-# if() ...
+# if connectionType == 1444: ...
 
-#Now, it connects to the API with o-auth2, updated 05/05/2016
-...
+# Now, it connects to the API with o-auth2, updated 05/05/2016
 ```
 ---
 
@@ -782,7 +594,93 @@ Templates and ideas:
 - https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
 - https://github.com/matiassingers/awesome-readme
 
+
 ---
+# Take home
+
+
+
+---
+# Additional things to look out for
+
+- Use version control
+- Choose a license
+- Beware of dependencies
+
+---
+
+# Choosing a license
+
+- Copyright is implicit; others cannot use your code without your permission.
+
+- Licensing gives that permission, and its boundaries and conditions.
+
+- Choosing a license early on means being aware of your license as the project proceeds (and not creating conflicts).
+
+- There are over [80 OSI-approved licenses](https://opensource.org/licenses/alphabetical) (and [many](http://dbad-license.org), [many](http://www.wtfpl.net) others) to choose from.
+
+This is one I like to use:
+
+![license](images/license.png)
+
+What is important to you? What does your lab use? [Choose your own license!](http://choosealicense.com)
+
+---
+# Use version control!
+
+.pull-left[
+
+- It efficiently manages all versions of ~~your code~~ most of your files.
+
+- It is easy to trace changes from one version to the next.
+
+- It allows you to trace back your steps: if something breaks, you can figure out what happened.
+
+
+#### even better:
+- a good version control system allows you to collaborate and share.
+
+- a good version control system facilitates experimentation.
+
+- you can integrate and automate code tests, saving yourself (a lot of) time!
+
+]
+
+.pull-right[
+![final](http://www.phdcomics.com/comics/archive/phd101212s.gif)
+]
+---
+.pull-left-larger[
+# What is git?
+- Distributed Version Control system written by Linus Torvalds (of Linux fame)
+
+- Allows you to log updates, branch your work (so you can experiment without losing the original!), and keep all backups, while efficiently using your storage
+
+- Gives user a lot of control on what to track, and adds a narrative to changes ('commit comments')
+
+- Current standard for code
+
+- Open Source software written for the command line...
+
+- ... but many GUI-clients exist nowadays, and most coding IDEs have built-in git.]
+.pull-right-smaller[
+![distributed](images/distributed.png)
+
+![git](https://imgs.xkcd.com/comics/git.png)
+]
+
+---
+# Some Git resources, for reference
+
+- A [Software Carpentry course on git](https://swcarpentry.github.io/git-novice/)
+
+- A [version control + git tutorial](https://www.atlassian.com/git/tutorials/what-is-version-control) on Atlassian
+
+- A [git cheatsheet](https://www.atlassian.com/git/tutorials/atlassian-git-cheatsheet) from Atlassian
+
+- A book with [all the ins and outs of git](https://www.git-scm.com/book/en/v2) from the git website
+
+![atlassian](images/bubblediag.svg)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
