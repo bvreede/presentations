@@ -89,11 +89,11 @@ Share your data, release your code, publish your findings.]
   - in a config file, with clear instructions to edit
   - OR pulled automatically from the system when the project is launched:
   
-e.g.:
-```python
-import os
-os.getcwd()
-```
+  e.g.:
+  ```python
+  import os
+  os.getcwd()
+  ```
 
 ---
 # Aspects of good quality code
@@ -162,7 +162,7 @@ for item in basket:
 
 - use a consistent style
   - consistency will make your code easier to understand and maintain
-  - consult a style guide for your language (keep conventions, and don't reinvent the wheel)
+  - consult a [style guide](https://www.python.org/dev/peps/pep-0008/) for your language (keep conventions, and don't reinvent the wheel)
   
 --
 
@@ -174,15 +174,6 @@ myVar=original_variable+MOD(new.var)
 ```r
 my_var = original_var + Modified(new_var)
 ```
----
-# Styleguide
-
-Python style manual: [Pep-8](https://www.python.org/dev/peps/pep-0008/)
-  
-![codequality](https://imgs.xkcd.com/comics/code_quality.png)
-.footnote[
-Source: [xkcd](https://xkcd.com/1513/)
-]
 
 ---
 # Code reusability: some guidelines
@@ -261,7 +252,7 @@ Small, cohesive units are much better than...
 ---
 # Code robustness
 
-#### Protect the user with error management:
+#### Protect the user* with error management:
 
 - Make assumptions and expectations explicit.
   - check values before processing them
@@ -274,10 +265,12 @@ Small, cohesive units are much better than...
   
 --
 
-#### Protect the developer with tests:
+#### Protect the developer* with tests:
 - Use errors and error management to test expected behavior
 - Capture unexpected errors to identify further options for error management
 
+--
+.footnote[*) both of these are, first of all, you ;-)]
 
 ---
 # Throwing an error
@@ -468,34 +461,6 @@ num_columns = self.removed_level.
 
 
 .footnote[*) Remember? That's probably you!]
----
-# Generating docstrings
-In R you will need a separate package to deal with docstrings:
-
-.pull-left[
-```r
-library(docstring)
-
-#' @title Multiply two numbers
-#' @description This function takes two 
-#' input numbers and multiplies
-#' them. It returns the multiplied result.
-#' @param x The first value
-#' @param y The second value
-#' @return The two arguments multiplied.
-multiply &lt;- function(x,y){
-  return(x*y)
-}
-
-?multiply
-```
-]
---
-.pull-right[![R example](images/r_documentation.png)
-
-]
-
-*Much more information in the [vignette for docstring.](https://cran.r-project.org/web/packages/docstring/vignettes/docstring_intro.html)*
 
 ---
 # Generating docstrings
@@ -515,42 +480,6 @@ def multiply(x,y):
   return x*y
 ```
 NB: a triple single quote (`'''`) works, but PEP style prefers double quotes for docstrings.
----
-
-# A glimpse into code generation
-
-Docstrings are formatted so that they can easily be turned into documentation of your package.
-
-You will need additional tools:
-
-  * http://www.doxygen.nl/ : C++ (and many more languages)
-  * http://www.sphinx-doc.org/ : Python
-  * https://roxygen2.r-lib.org/ : R
-
-We will not do this today, but it is worth checking out if you want to release your code!
----
-# A glimpse into code generation
-
-In the console, in RStudio, run the following command:
-
-```R
-roxygen2::roxygenise()
-```
-
-.pull-left-larger[
-The command above will create documentation files that can be visualized by calling help(your package)
-]
-
-.pull-right-smaller[
-
-![output](images/document_roxygen_r_help.PNG)
-
-]
-
-.footnote[
-__NB__ This works for R packages, with the proper file structure. See here: http://r-pkgs.had.co.nz/intro.html
-]
-
 ---
 # README
 
@@ -598,7 +527,10 @@ Templates and ideas:
 ---
 # Take home
 
-
+- Invest in code readability
+- Use functions to make your code more flexible, robust, and reusable.
+- Documentation is an integral part of your project
+- A good workflow supports you and makes your project more reproducible
 
 ---
 # Additional things to look out for
