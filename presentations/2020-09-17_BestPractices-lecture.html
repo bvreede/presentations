@@ -92,7 +92,7 @@ Share your data, release your code, publish your findings.]
   e.g.:
   ```python
   import os
-  os.getcwd()
+  projectdir = os.getcwd()
   ```
 
 ---
@@ -270,7 +270,10 @@ Small, cohesive units are much better than...
 - Capture unexpected errors to identify further options for error management
 
 --
-.footnote[*) both of these are, first of all, you ;-)]
+
+.footnote[
+*) both of these are, first of all, you ;-)
+]
 
 ---
 # Throwing an error
@@ -312,9 +315,13 @@ _Because it is unclear if `None` is expected behavior or indicative of a problem
 
 If you do not want to interrupt your script when an error is raised: use try/except. NB: Note that Python allows you to distinguish by error type!
 
-.pull-left[
 
 ```python
+def read_vector_value(index=0, my_vector=[10,5,4,12,25]):
+    if index &gt; len(my_vector) - 1:
+        raise IndexError('Index higher than vector length.')
+    return my_vector[index]
+
 try:
   read_vector_value(6)
 except IndexError:
@@ -322,36 +329,9 @@ except IndexError:
 ```
 
 ```
-## Traceback (most recent call last):
-##   File "&lt;string&gt;", line 2, in &lt;module&gt;
-## NameError: name 'read_vector_value' is not defined
-```
-]
-.pull-right[
-
-```python
-try:
-  read_vector_value(6)
-except ArithmeticError:
-  print("This is an exception")
+## This is an exception
 ```
 
-```
-## Traceback (most recent call last):
-##   File "&lt;string&gt;", line 2, in &lt;module&gt;
-## NameError: name 'read_vector_value' is not defined
-```
-]
----
-# Validating input
-
-Consider early statements in the script to validate (data) input.
-
-Use a simple if/else:
-```python
-if not protein_data:
-  raise ValueError("Dataset cannot be empty")
-```
 ---
 # Expectations and assumptions
 
@@ -527,20 +507,65 @@ Templates and ideas:
 ---
 # Take home
 
+#### Good code is Readable, Re-usable, and Robust
 - Invest in code readability
-- Use functions to make your code more flexible, robust, and reusable.
-- Documentation is an integral part of your project
-- A good workflow supports you and makes your project more reproducible
+- Think in building blocks, and use functions
+- Make your assumptions explicit
+
+#### Documentation is an integral part of your project
+- Readme introduces the user to your project
+- Comments explain the code and its use
+- Notebooks can be used for in-depth exploration
+
+#### Use good project management to your advantage
+- Project is located in a single folder
+- Sub-folders are either __human-writable__, __read-only__, or __project-generated__
 
 ---
 # Additional things to look out for
 
 - Use version control
+
 - Choose a license
+
 - Beware of dependencies
 
 ---
+# Use version control (like Git!)
 
+.pull-left[
+
+- It efficiently manages all versions of ~~your code~~ most of your files.
+
+- It is easy to trace changes from one version to the next.
+
+- It allows you to trace back your steps: if something breaks, you can figure out what happened.
+
+- Branches facilitate experimentation.
+
+- Using a service like GitLab, it allows you to collaborate and share your code.
+
+- you can integrate and automate code tests, saving yourself (a lot of) time!
+
+]
+
+.pull-right[
+![git](https://imgs.xkcd.com/comics/git.png)
+]
+
+---
+# Some Git resources, for reference
+
+- A [Software Carpentry course on git](https://swcarpentry.github.io/git-novice/)
+
+- A [version control + git tutorial](https://www.atlassian.com/git/tutorials/what-is-version-control) on Atlassian
+
+- A [git cheatsheet](https://www.atlassian.com/git/tutorials/atlassian-git-cheatsheet) from Atlassian
+
+- A book with [all the ins and outs of git](https://www.git-scm.com/book/en/v2) from the git website
+
+![atlassian](images/bubblediag.svg)
+---
 # Choosing a license
 
 - Copyright is implicit; others cannot use your code without your permission.
@@ -558,61 +583,60 @@ This is one I like to use:
 What is important to you? What does your lab use? [Choose your own license!](http://choosealicense.com)
 
 ---
-# Use version control!
+# Dependencies
 
-.pull-left[
+Dependencies and versions can stop your users/readers from being able to run your code.
 
-- It efficiently manages all versions of ~~your code~~ most of your files.
+For example: this code written in Python 2.7:
 
-- It is easy to trace changes from one version to the next.
+```python
+print "Hello world!"
+```
 
-- It allows you to trace back your steps: if something breaks, you can figure out what happened.
+```
+## Hello world!
+```
 
+--
 
-#### even better:
-- a good version control system allows you to collaborate and share.
+No longer works in Python 3!
 
-- a good version control system facilitates experimentation.
+```python
+print "Hello world!"
+```
+```
+SyntaxError: Missing parentheses in call to 'print'. Did you mean print("Hello world!")?
+```
+--
 
-- you can integrate and automate code tests, saving yourself (a lot of) time!
+Instead, we write:
 
-]
+```python
+print("Hello world!")
+```
 
-.pull-right[
-![final](http://www.phdcomics.com/comics/archive/phd101212s.gif)
-]
----
-.pull-left-larger[
-# What is git?
-- Distributed Version Control system written by Linus Torvalds (of Linux fame)
-
-- Allows you to log updates, branch your work (so you can experiment without losing the original!), and keep all backups, while efficiently using your storage
-
-- Gives user a lot of control on what to track, and adds a narrative to changes ('commit comments')
-
-- Current standard for code
-
-- Open Source software written for the command line...
-
-- ... but many GUI-clients exist nowadays, and most coding IDEs have built-in git.]
-.pull-right-smaller[
-![distributed](images/distributed.png)
-
-![git](https://imgs.xkcd.com/comics/git.png)
-]
+```
+## Hello world!
+```
 
 ---
-# Some Git resources, for reference
+# The reproducibility trade-off
 
-- A [Software Carpentry course on git](https://swcarpentry.github.io/git-novice/)
+How far do you go towards reproducibility?
 
-- A [version control + git tutorial](https://www.atlassian.com/git/tutorials/what-is-version-control) on Atlassian
+![](images/dependencytradeoff.svg)
 
-- A [git cheatsheet](https://www.atlassian.com/git/tutorials/atlassian-git-cheatsheet) from Atlassian
 
-- A book with [all the ins and outs of git](https://www.git-scm.com/book/en/v2) from the git website
+- **due diligence** starts at declaring dependencies: declare how your project works **for you**, in a requirements file or README.
+  - What language, what version?
+  - What packages/libraries do you load
+  - What OS do you use? (Does it work on your collaborator's system?)
 
-![atlassian](images/bubblediag.svg)
+- packaging dependencies with e.g. [pipenv](https://packaging.python.org/tutorials/managing-dependencies/).
+
+- containers are awesome. Consider container tools like [Docker](https://www.docker.com/) and [Singularity](https://sylabs.io/).
+
+- But! Even more user-friendly options exist: like [CodeOcean](https://codeocean.com) (`$$$`) and [binder](https://mybinder.org/) (free!).
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
