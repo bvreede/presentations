@@ -54,6 +54,12 @@ img[alt=folderstructure] {height: 250px; margin: 0 200px;}
 img[alt=run] {height: 40px; margin: -12px 5px;}
 img[alt=propplot] {height: 400px;}
 
+img[alt=atlassian] { width: 500px; margin: 0 150px;}
+img[alt=errormanagement] {width: 800px; margin: 20px;}
+img[alt=distributed] { margin: -40px 0;}
+img[alt=goodcode] {width: 350px;}
+img[alt=codequality] {margin: 100px 50px;}
+img[alt=nouser] {height: 300px;}
 
 .large-left-column {
   color: #000;
