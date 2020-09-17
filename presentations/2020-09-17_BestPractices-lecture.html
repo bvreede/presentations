@@ -19,6 +19,10 @@ class: center, middle, inverse, title-slide
 ---
 
 
+
+These slides are at: [tinyurl.com/UED2020BP](https://bvreede.github.io/presentations/presentations/2020-09-17_BestPractices-lecture.html#1)
+
+---
 # Reproduction is vital
 
 .pull-left[
@@ -338,6 +342,36 @@ except IndexError:
 ```
 
 ---
+# Unit tests
+
+- Several methods available in Python
+- One library that works well: `unittest`
+
+
+```python
+import unittest
+
+def addNumber(x,y):
+  z = x + y
+  return(z)
+
+class TestDummy(unittest.TestCase):
+    def test_addNumber(self):
+        """Test if the addition works properly"""
+        self.assertEqual(addNumber(3,4),7)
+
+unittest.main()
+```
+
+```
+## .
+## ----------------------------------------------------------------------
+## Ran 1 test in 0.000s
+## 
+## OK
+```
+
+---
 # Project documentation
 
 #### Why do you need documentation?
@@ -631,6 +665,25 @@ How far do you go towards reproducibility?
 - containers are awesome. Consider container tools like [Docker](https://www.docker.com/) and [Singularity](https://sylabs.io/).
 
 - But! Even more user-friendly options exist: like [CodeOcean](https://codeocean.com) (`$$$`) and [binder](https://mybinder.org/) (free!).
+
+---
+# Do we have some time?
+
+Take this to practice your new found skills!
+
+Choose one of these exercises:
+
+#### Project Structure
+- Design with your group a folder structure for your project.
+- Determine which subfolders are (or will be) read-only, human-editable, or project-generated.
+
+
+#### Readme
+- Look at the Readme page of your project (do you have one?!)
+- Take a look at the Readme examples in the slides
+- Determine subjects you want to address (or already address them, if there is time!)
+
+#### Bonus: fork the repository and use pull requests and merge in GitLab to work together!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
