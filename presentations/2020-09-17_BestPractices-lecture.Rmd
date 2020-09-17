@@ -1,5 +1,5 @@
 ---
-title: "Writing reproducible code"
+title: "Best Practices for Writing Reproducible Code"
 author: "Barbara Vreede, Utrecht University Library"
 output:
   xaringan::moon_reader:
