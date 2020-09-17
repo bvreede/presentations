@@ -26,7 +26,10 @@ Reproduction is a vital contribution to science:
 - Reproducing projects identifies the giants on whom to stand.
 
 ]
-.footnote[Source: [1,500 scientists lift the lid on reproducibility](https://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970), Nature (2016)]
+
+.footnote[
+Source: [1,500 scientists lift the lid on reproducibility](https://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970), Nature (2016)
+]
 
 ---
 # The Four Facets of Reproducibility
@@ -267,7 +270,9 @@ Small, cohesive units are much better than...
 --
 
 .footnote[
+
 *) both of these are, first of all, you ;-)
+
 ]
 
 ---
@@ -310,18 +315,6 @@ except IndexError:
 ```
 
 ---
-# Expectations and assumptions
-
-#### Expect the worst
-- use of wrong input values for functions
-- malformed text input
-- wrong data types
-
-![nouser](https://4.bp.blogspot.com/_YzKCMr-tcMM/S9bN9dGqgBI/AAAAAAAAALo/cxqBx5AaoYk/s640/23GORILLA.jpg)
-.footnote[
-Source: [cartoontester](https://cartoontester.blogspot.com/2010/02/thats-not-bug.html)
-]
----
 # Project documentation
 
 #### Why do you need documentation?
@@ -333,11 +326,54 @@ Source: [cartoontester](https://cartoontester.blogspot.com/2010/02/thats-not-bug
 --
 
 #### For this you need to 
-- Explain (parts of) your code with __comments__
-
 - Explain what to install and how to get started in your __readme__
 
+- Explain (parts of) your code with __comments__
+
 - Explain in-depth use of your code in a __notebook__
+
+---
+# README
+
+The README page is the first thing your user will see!
+
+The contents typically include one or more of the following:
+
+> - __Configuration instructions__
+- __Installation instructions__
+- __Operating instructions__
+- A file manifest (list of files included)
+- Copyright and licensing information
+- Contact information for the distributor or programmer
+- Known bugs
+- Troubleshooting
+- Credits and acknowledgments
+
+*From wikipedia's [Readme]("https://en.wikipedia.org/w/index.php?title=README&oldid=923233067") page*
+---
+# An example
+![mcfly](images/mcfly.png)
+
+---
+# README examples and templates
+
+Some examples from projects with high quality documentation:
+
+Bigger community software projects:
+- Python's [Pandas](https://github.com/pandas-dev/pandas)
+- [Scikit-learn](https://github.com/scikit-learn/scikit-learn)
+- Tidyverse's [Dplyr](https://github.com/tidyverse/dplyr)
+
+Research software:
+- e-science center's ['McFly' tool](https://github.com/NLeSC/mcfly)
+- Utrecht University's: [Automatic Systematic Review](https://github.com/msdslab/automated-systematic-review)
+- Utrecht University's [MICE](https://github.com/stefvanbuuren/mice)
+
+
+Templates and ideas:
+
+- https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+- https://github.com/matiassingers/awesome-readme
 
 ---
 # Comments
@@ -437,48 +473,6 @@ def multiply(x,y):
   return x*y
 ```
 NB: a triple single quote (`'''`) works, but PEP style prefers double quotes for docstrings.
----
-# README
-
-The README page is the first thing your user will see!
-
-The contents typically include one or more of the following:
-
-> - __Configuration instructions__
-- __Installation instructions__
-- __Operating instructions__
-- A file manifest (list of files included)
-- Copyright and licensing information
-- Contact information for the distributor or programmer
-- Known bugs
-- Troubleshooting
-- Credits and acknowledgments
-
-*From wikipedia's [Readme]("https://en.wikipedia.org/w/index.php?title=README&oldid=923233067") page*
----
-# An example
-![mcfly](images/mcfly.png)
-
----
-# README examples and templates
-
-Some examples from projects with high quality documentation:
-
-Bigger community software projects:
-- Python's [Pandas](https://github.com/pandas-dev/pandas)
-- [Scikit-learn](https://github.com/scikit-learn/scikit-learn)
-- Tidyverse's [Dplyr](https://github.com/tidyverse/dplyr)
-
-Research software:
-- e-science center's ['McFly' tool](https://github.com/NLeSC/mcfly)
-- Utrecht University's: [Automatic Systematic Review](https://github.com/msdslab/automated-systematic-review)
-- Utrecht University's [MICE](https://github.com/stefvanbuuren/mice)
-
-
-Templates and ideas:
-
-- https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
-- https://github.com/matiassingers/awesome-readme
 
 
 ---
