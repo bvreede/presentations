@@ -1,6 +1,6 @@
 # Presentations
 
-Presentations given:
+Presentations given (open them in [pages mode](https://bvreede.github.io/presentations) to see the actual presentation):
 
 - [17 September 2020 - Project Management and Best Coding Practices lecture](presentations/2020-09-17_BestPractices-lecture.html)
 - [4 June 2020 - Workshop Open Access monitoring, day 2](presentations/2020-06-03_OAmonitor-workshop.html#19)
