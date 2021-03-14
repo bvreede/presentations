@@ -1,0 +1,35 @@
+---
+title: "Chapter 4: Directions and Weights"
+author: "4.1 and 4.2"
+output:
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts, 'custom.css']
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+# 4.1 Directed Networks
+
+
+- Edge goes _from_ source node _to_ target node
+
+- Each node has a degree
+  - in-degree: number of incoming links
+  - out-degree: number of outgoing links
+  
+--
+
+- Observed in information networks, such as:
+  - email
+  - wikipedia
+  - journal publications
+  
+---
+# 4.2 The web
+
+
