@@ -3,7 +3,7 @@
   <head>
     <title>Chapter 4: Directions and Weights</title>
     <meta charset="utf-8" />
-    <meta name="author" content="4.1 and 4.2" />
+    <meta name="author" content="4.1 and 4.2: The Web as an Information Network" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -14,11 +14,20 @@
 class: center, middle, inverse, title-slide
 
 # Chapter 4: Directions and Weights
-### 4.1 and 4.2
+### 4.1 and 4.2: The Web as an Information Network
 
 ---
 
 
+#### These slides:
+[tinyurl.com/analytics20210315](https://tinyurl.com/analytics20210315)
+
+#### License:
+
+&lt;img src="https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by.png" width="150" /&gt;
+
+All content licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) except when indicated otherwise.
+---
 # 4.1 Directed Networks
 
 
@@ -37,6 +46,79 @@ class: center, middle, inverse, title-slide
   
 ---
 # 4.2 The web
+
+#### The world wide web as an information network:
+- **Node**: anything with a URL
+- **Edge**: link to a URL (directed)
+
+--
+
+#### Browser and server communicate through HTTP protocol:
+- _Client_ sends URL (e.g. host.npr.org)
+- _DNS_ returns IP (e.g. 216.35.221.76)
+- _Client_ sends request (e.g.)
+  ```
+  GET / HTTP/1.1
+  Host: npr.org
+  ```
+- _Server_ returns content (e.g.)
+  ```
+  HTTP 1.1 200 OK
+  Content-Type: text/html
+  
+  &lt;HTML&gt;
+  &lt;HEAD&gt;
+  &lt;Title&gt;National Public Radio&lt;/Title&gt;
+  ...
+  &lt;/HTML&gt;
+  ```
+
+---
+# Web crawler
+
+.pull-left[
+#### Breadth-first search algorithm running on the Web link graph
+
+- Starts from (high-quality/relevant) seed pages
+- Recursively extracts links and adds them to 'frontier'
+- Technically challenging, but conceptually simple
+
+
+#### The frontier:
+
+- First in, first out
+- Pages at distance _n-1_ before those at distance _n_
+- Thus: high initial relevance to seed
+- Often optimized, revisit known pages
+]
+
+.pull-right[
+
+&lt;img src="images/web_crawler.png" width="400" /&gt;
+
+]
+
+---
+# Web structure and size
+
+**Web graph**: the network of Web pages and hyperlinks
+
+- Many (weakly) connected components
+- Skewed size distribution
+
+.pull-left[
+![](https://www.pingdom.com/wp-content/uploads/2018/11/imageD.png)&lt;!-- --&gt;
+
+[Copyright: pingdom.com](https://www.pingdom.com/blog/webpages-are-getting-larger-every-year-and-heres-why-it-matters/)
+]
+
+.pull-right[
+&lt;img src="images/https_requests.png" width="1600" /&gt;
+[Copyright: HTTP archive](https://httparchive.org/reports/state-of-the-web#pctHttps)
+]
+
+---
+# Bow-tie structure
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
