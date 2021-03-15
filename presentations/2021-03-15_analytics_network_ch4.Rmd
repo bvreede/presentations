@@ -122,3 +122,56 @@ knitr::include_graphics("images/https_requests.png")
 
 ---
 # Bow-tie structure
+
+- **Giant strongly connected component**: every node is reachable from every other node
+
+  ```{r, echo=F}
+  knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Scc.png/440px-Scc.png")
+  ```
+  
+  [Source: wikipedia](https://en.wikipedia.org/wiki/Strongly_connected_component)
+- **in-component**: those pages through which the GSCC can be reached
+- **out-component**: those pages the GSCC can reach
+
+
+---
+# Topical locality
+#### _Homophily_ in information networks
+- the tendency of similar nodes to be connected
+- "the capability to guess what a page is about by looking at the content of its neighbor pages"
+
+--
+
+#### Topical Locality: 
+
+Likeliness that a target page within a given distance from the source is about the same topic as the source, related to this happening by chance (i.e. how general the topic is)
+
+- Text similarity is a proxy for topical relatedness
+  - calculated with co-occurrence of keywords (cosine similarity)
+  
+#### Topical locality is the relationship between the structure of the information networks and the content of the nodes
+
+
+---
+# Cosine similarity
+
+- document _d_ as high-dimensionality vector: each term in the vocabulary has a weight _w_ in the vector
+- weight typically corresponds to frequency of a term in the document
+- compute the similarity between two documents by measuring the cosine between their vectors
+- cosine close to 1: high similarity
+- cosine close to 0: unrelated documents
+
+---
+
+### Exercises: in-degree and out-degree
+
+1. Go to [google scholar](https://scholar.google.com) and search for publications on **network science**. Pick two papers from the search results:
+1. What is the in-degree of the paper in the citation network?
+1. What is the out-degree (i.e. number of papers citing them)?
+
+
+---
+
+
+
+
