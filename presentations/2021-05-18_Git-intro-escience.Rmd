@@ -247,6 +247,67 @@ class: inverse, center, middle
 # Let's make a repository!
 
 ---
+# Your workflow
+
+```{r echo=FALSE}
+knitr::include_graphics("https://images.osteele.com/2008/git-transport.png")
+
+```
+
+.footnote[credit: [osteele.com](https://blog.osteele.com/2008/05/my-git-workflow/)]
+---
+# Your workflow
+
+What command do you use when you want to download remote changes?
+
+1.
+```bash
+git pull
+```
+
+2.
+```bash
+git commit
+```
+
+3.
+```bash
+git push
+```
+
+---
+# Your workflow
+
+What command do you use when you want to log new changes?
+
+1.
+```bash
+git pull
+```
+
+2.
+```bash
+git commit
+```
+
+3.
+```bash
+git push
+```
+
+---
+
+# Enjoy, but git responsibly
+
+- **Don't** leave work without committing it!
+- **Do** commit small, but atomic changes, with a meaningful commit message.
+
+--
+
+- **Don't** leave work without committing it!
+- **Do** commit small, but atomic changes, with a meaningful commit message.
+
+---
 class: inverse, center, middle
 
 # NB. The following slides are not meant for teaching :)
@@ -360,6 +421,8 @@ Close with `ctrl + X` > `Y` > `enter`
 # exercise
 
 Which command(s) below would save the changes of myfile.txt to my local Git repository?
+
+
 1.
 ```bash
 $ git commit -m "my recent changes"
