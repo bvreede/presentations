@@ -1,19 +1,18 @@
 .remark-slide-content {
   background-color: #FFFFFF;
-  border-top: 80px solid #009999;
+  border-top: 80px solid #00aeef;
 }
 
 .clear{
   border-top: 0 solid gray;
 }
 
-
 .title-slide > h1, .title-slide > h2, .title-slide > h3 {
   color: #303030;
 }
 
 .inverse {
-  background-color: #009999;
+  background-color: #00aeef;
   color: #d6d6d6;
   text-shadow: 0 0 2px #333;
 }
@@ -30,14 +29,13 @@
 
 
 a, a > code {
-  color: #009999;
+  color: #00aeef;
   font-weight: 400;
 }
 
 
 .title-slide {
-  /*background-image: url(slides_version-control_files/figure-html/git.svg);*/
-  background-color: #FFFFFF;
+  background-image: url(images/git-escience/escience_bg1.png);
   background-size: cover;
   border-top: 0;
 }
