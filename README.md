@@ -3,6 +3,7 @@
 Presentations given (open them in [pages mode](https://bvreede.github.io/presentations) to see the actual presentation):
 
 ## 2021
+- [18 May 2021 - NLeSC Small Scale Initiative - Introduction to Git](presentations/2021-05-18_Git-intro-escience.html)
 - [15 March 2021 - Analytics SIG: Chapter 4 of A First Course in Network Science](presentations/2021-03-15_analytics_network_ch4.html)
 - [11 March 2021 - Regular expressions in R (R ladies Utrecht)](https://bvreede.github.io/rladies_regex/regex_utrecht.html#1)
 
